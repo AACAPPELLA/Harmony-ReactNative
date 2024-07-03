@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-function Start() {
+function ChatScreen() {
   return (
     <View>
       <Text>Start!</Text>
@@ -9,4 +9,4 @@ function Start() {
   );
 }
 
-export default Start;
+export default ChatScreen;
