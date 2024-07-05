@@ -1,46 +1,22 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import {SafeAreaView, StyleSheet, useColorScheme, View, Text, Image} from 'react-native';
-import MainLogo from './MainLogo.tsx';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './screens/HomeScreen';
+import EmergencyScreen from './screens/EmergencyScreen';  
+import ChatScreen from './screens/ChatScreen';  
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const Stack = createStackNavigator();
 
-  const backgroundStyle = {
-    backgroundColor: '#291695',
-  };
-
+const App = () => {
   return (
-    <SafeAreaView style={[styles.container, backgroundStyle]}>
-      <View style={styles.container}>
-        <Image source={require('./assets/images/main-logo.png')} style={styles.image} />
-
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Emergency" component={EmergencyScreen} />
+        <Stack.Screen name="Chat" component={ChatScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    color: 'white',
-    marginBottom: 20, // 이미지와 텍스트 사이의 간격을 추가합니다
-  },
-  image: {
-    width: 150,
-    height: 200,
-  },
-});
+};
 
 export default App;
