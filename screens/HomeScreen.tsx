@@ -13,7 +13,7 @@ const HomeScreen = () => {
       <Image source={require('../assets/harmony-logo.png')} style={styles.logo} />
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Emergency')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EmergencyChecking')}>
           <Image source={require('../assets/emergency-icon.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>긴급 상황 판단</Text>
         </TouchableOpacity>
