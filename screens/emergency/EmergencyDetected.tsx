@@ -1,16 +1,40 @@
-import React from 'react';
-import StatusScreen from '../../components/StatusScreen';
+// screens/EmergencyScreen.js
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-const EmergencyDetected = ({ navigation }) => {
+const EmergencyScreen = ({ navigation }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate('EmergencyDetail');
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [navigation]);
+
   return (
-    <StatusScreen
-      navigation={navigation}
-      message="긴급 상황이에요"
-      buttonTitle="자세히 보기"
-      nextScreen="EmergencyDetail"
-      imageSource={require('../../assets/emergency.png')} // 긴급 상황 아이콘
-    />
+    <View style={styles.container}>
+      <Image source={require('../../assets/emergency.png')} style={styles.icon} />
+      <Text style={styles.text}>긴급 상황이에요</Text>
+    </View>
   );
 };
 
-export default EmergencyDetected;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  icon: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 24,
+    color: '#d9534f',
+    fontWeight:"bold",
+  },
+});
+
+export default EmergencyScreen;
