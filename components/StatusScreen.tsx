@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native';
 
-const StatusScreen = ({ navigation, message, buttonTitle, nextScreen, imageSource }) => {
+const StatusScreen = ({ navigation, message, buttonTitle, nextScreen, imageSource,loadingimageSource }) => {
   return (
     <View style={styles.container}>
       <Image source={imageSource} style={styles.icon} />
       <Text style={styles.text}>{message}</Text>
+      <Image source={loadingimageSource} style={styles.loadingicon} />
       {buttonTitle && (
         <Button
           title={buttonTitle}
@@ -23,6 +24,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
+  },
+  loadingicon:{
+    width: 10,
+    height: 10
   },
   icon: {
     width: 100,

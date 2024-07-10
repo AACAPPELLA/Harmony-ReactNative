@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
 
-const EmergencyScreen = () => {
+const EmergencyScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
+      </TouchableOpacity>
       <Text style={styles.title}>긴급 상황 판단 내용</Text>
       <View style={styles.header}>
         <View style={styles.headerBox}>
@@ -36,6 +39,17 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    padding: 5,
+    zIndex: 1, // Ensures the back button is on top
+  },
+  backButtonImage: {
+    width: 24,
+    height: 24,
   },
   title: {
     fontSize: 18,
