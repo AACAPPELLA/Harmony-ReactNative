@@ -27,7 +27,7 @@ const HomeScreen = () => {
           <Text style={styles.buttonText}>긴급 상황 판단</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Chat')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ListeningChat')}>
           <Image source={require('../assets/chat-icon.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>대화 시작하기</Text>
         </TouchableOpacity>
