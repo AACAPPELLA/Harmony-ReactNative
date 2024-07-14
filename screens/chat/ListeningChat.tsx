@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 50, 
-    left: 20, 
+    top: 10, 
+    left: 10, 
     padding: 5,
   },
   backButtonImage: {
@@ -47,14 +47,15 @@ const styles = StyleSheet.create({
     height: 24,
   },
   icon: {
-    width: 100,
-    height: 100,
-    marginBottom: 20,
+    width: 150,
+    height: 150,
+    marginBottom: 40,
+    marginTop: 120
   },
   text: {
-    fontSize: 20,
+    fontSize: 27,
     color: '#291695',
-    marginBottom: 20,
+    marginBottom: 40,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 180,
   },
   indicatorInactive: {
     width: 8,
@@ -83,19 +84,20 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   confirmationText: {
-    fontSize: 16,
+    fontSize: 20,
     color: '#291695',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   blueButton: {
     backgroundColor: '#291695',
     paddingVertical: 15,
     paddingHorizontal: 40,
-    borderRadius: 25,
+    borderRadius: 15,
+    width: '100%',
   },
   blueButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
   }
