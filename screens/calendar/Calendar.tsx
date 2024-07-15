@@ -71,13 +71,13 @@ const CalendarScreen = () => {
 
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('HomeScreen')}>
-          <Image source={require('../../assets/home-icon.png')} style={styles.footerIcon} />
+          <Image source={require('../../assets/home-icon-gray.png')} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('CalendarScreen')}>
-          <Image source={require('../../assets/calendar-icon.png')} style={styles.footerIcon} />
+          <Image source={require('../../assets/calendar-icon-navy.png')} style={styles.footerIcon} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('SettingsScreen')}>
-          <Image source={require('../../assets/settings-icon.png')} style={styles.footerIcon} />
+          <Image source={require('../../assets/settings-icon-gray.png')} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
     </View>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 25,
+    paddingVertical: 45,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     width: '100%',
