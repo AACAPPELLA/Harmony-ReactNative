@@ -46,13 +46,13 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Home')}>
           <Image source={require('../assets/home-icon.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Calendar')}>
           <Image source={require('../assets/calendar-icon.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Settings')}>
           <Image source={require('../assets/settings-icon.png')} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
