@@ -3,12 +3,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import EmergencyScreen from './screens/EmergencyScreen';  
-import ChatScreen from './screens/ChatScreen'; 
+import ChatScreen from './screens/chat/ChatScreen'; 
 import EmergencyChecking from './screens/emergency/EmergencyChecking';
 import EmergencyDetected from './screens/emergency/EmergencyDetected';
 import EmergencyDetail from './screens/emergency/EmergencyDetail';
 import SafeDetected from './screens/emergency/SafeDetected';
 import SafeDetail from './screens/emergency/SafeDetail' 
+import ListeningChat from './screens/chat/ListeningChat';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +19,8 @@ const App = () => {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Emergency" component={EmergencyScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
+        <Stack.Screen name="ListeningChat" component={ListeningChat} />
+        <Stack.Screen name="ChatScreen" component={ChatScreen} />
         <Stack.Screen name="EmergencyChecking" component={EmergencyChecking} options={{headerShown: false}} />
         <Stack.Screen name="EmergencyDetected" component={EmergencyDetected} options={{headerShown: false}} />
         <Stack.Screen name="EmergencyDetail" component={EmergencyDetail} options={{headerShown: false}} />

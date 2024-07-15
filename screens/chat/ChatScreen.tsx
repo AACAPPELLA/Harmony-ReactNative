@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image} from "react-native";
 
 function ChatScreen() {
   const [messages, setMessages] = useState([
@@ -9,7 +9,7 @@ function ChatScreen() {
     { id: 4, text: "So explain to me more", sender: "user" }
   ]);
   
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState(""); 
 
   const handleSend = () => {
     if (inputText.trim() !== "") {
@@ -35,16 +35,19 @@ function ChatScreen() {
           </View>
         ))}
       </ScrollView>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="사용자님의 이야기를 작성해주세요"
-          value={inputText}
-          onChangeText={setInputText}
-        />
-        <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
+      <View style={styles.inputSection}>
+        <Text style={styles.confirmationText}>사용자님의 이야기를 작성해주세요</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="이곳을 눌러 답변을 입력해주세요"
+            value={inputText}
+            onChangeText={setInputText}
+          />
+          <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
+            <Image source={require('../../assets/send.png')} style={styles.buttonIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -101,28 +104,53 @@ const styles = StyleSheet.create({
   botText: {
     color: "#000",
   },
+  inputSection: {
+    padding: 10,
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderTopWidth: 1,
-    borderColor: "white",
-    padding: 5,
+    borderColor: "black",
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonIcon: {
+    width: 30,
+    height: 30,
+    marginTop: 5,
+    marginBottom: 5,
   },
   textInput: {
     flex: 1,
     padding: 10,
-    borderRadius: 20,
     borderColor: "#ccc",
-    borderWidth: 1,
     marginRight: 10,
+    fontSize: 16,
+    color: "#291695",
   },
   sendButton: {
-    backgroundColor: "#291695",
-    padding: 10,
+    backgroundColor: "white",
     borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendButtonText: {
-   color: "white"
+    color: "white",
+    fontSize: 20,
+  },
+  confirmationText: {
+    fontSize: 20,
+    color: '#291695',
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: '600'
   },
 });
 
