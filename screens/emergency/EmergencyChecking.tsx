@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Button, TouchableOpacity, Linking, Platform } from 'react-native';
 import BackButton from '../../components/BackButton'; // Adjust the path as needed
+import SpeechCommand from 'react-native-speech-command';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 
 const EmergencyChecking = ({ navigation }) => {
   const handleEmergency = () => {
@@ -9,6 +11,44 @@ const EmergencyChecking = ({ navigation }) => {
 
   const handleSafe = () => {
     navigation.navigate('SafeDetected');
+  };
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      SpeechCommand.addResultListener((result) => {
+        console.log('addResultListener', result);
+      });
+
+      SpeechCommand.addErrorListener((error) => {
+        console.error('addErrorListener', error);
+      });
+    }, 1000);
+  }, []);
+
+  const checkPermission = (callback: any) => {
+    const permission =
+      Platform.select({
+        ios: PERMISSIONS.IOS.MICROPHONE,
+        android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+      }) || PERMISSIONS.IOS.MICROPHONE;
+    
+    
+    request(permission).then((result) => {
+      if (result === RESULTS.GRANTED) {
+        callback();
+      } else {
+        console.log('Permission denied');
+        Linking.openSettings();
+      }
+    });
+  };
+
+  const handleStart = () => {
+    checkPermission(() => SpeechCommand.start());
+  };
+
+  const handleStop = () => {
+    checkPermission(() => SpeechCommand.stop());
   };
 
   return (
@@ -21,6 +61,9 @@ const EmergencyChecking = ({ navigation }) => {
         <Button title="긴급 상황" onPress={handleEmergency} color="#D0021B" />
         <Button title="안전 상황" onPress={handleSafe} color="#4CAF50" />
       </View>
+      <Button title="Init" onPress={SpeechCommand.init} />
+      <Button title='Start' onPress={handleStart} />
+      <Button title='Stop' onPress={handleStop} />
     </View>
   );
 };
