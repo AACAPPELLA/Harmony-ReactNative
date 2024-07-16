@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Button, TouchableOpacity } from 'react-native';
+import BackButton from '../../components/BackButton'; // Adjust the path as needed
 
 const EmergencyChecking = ({ navigation }) => {
   const handleEmergency = () => {
@@ -12,9 +13,7 @@ const EmergencyChecking = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
-      </TouchableOpacity>
+      <BackButton navigation={navigation} />
       <Image source={require('../../assets/emergency.png')} style={styles.icon} />
       <Text style={styles.text}>긴급 상황을 판단하는 중</Text>
       <Image source={require('../../assets/loading_red.png')} style={[styles.icon, styles.loadingIcon]} />
@@ -32,16 +31,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 20, // Adjust according to your need
-    left: 20, // Adjust according to your need
-    padding: 5,
-  },
-  backButtonImage: {
-    width: 24,
-    height: 24,
   },
   icon: {
     width: 100,
