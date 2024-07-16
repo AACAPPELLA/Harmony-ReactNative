@@ -9,13 +9,14 @@ import EmergencyDetected from './screens/emergency/EmergencyDetected';
 import EmergencyDetail from './screens/emergency/EmergencyDetail';
 import SafeDetected from './screens/emergency/SafeDetected';
 import SafeDetail from './screens/emergency/SafeDetail' 
-
+import LoginScreen from './screens/login/login'
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Emergency" component={EmergencyScreen} />
         <Stack.Screen name="Chat" component={ChatScreen} />
