@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Switch, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
@@ -8,8 +8,17 @@ const HomeScreen = () => {
 
   const toggleRiskMode = () => setIsRiskModeEnabled(previousState => !previousState);
 
+  const handleLogout = () => {
+    // Handle logout logic here
+    console.log('Logging out...');
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>로그아웃</Text>
+      </TouchableOpacity>
+
       <Image source={require('../assets/harmony-logo.png')} style={styles.logo} />
 
       <View style={styles.buttonsContainer}>
@@ -18,7 +27,7 @@ const HomeScreen = () => {
           <Text style={styles.buttonText}>긴급 상황 판단</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Chat')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ListeningChat')}>
           <Image source={require('../assets/chat-icon.png')} style={styles.buttonIcon} />
           <Text style={styles.buttonText}>대화 시작하기</Text>
         </TouchableOpacity>
@@ -54,27 +63,43 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: 15,
     backgroundColor: '#fff',
     alignItems: 'center',
   },
   logo: {
-    width: 150,
-    height: 23,
-    marginVertical: 20,
-    marginRight: 180,
+    width: 180,
+    height: 28,
+    marginTop: 70, 
+    marginBottom: 20,
+    marginRight: 130
+    
+  },
+  logoutButton: {
+    position: 'absolute',
+    top: 80,
+    right: 30,
+    backgroundColor: '#291695', 
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    height: 150,
+    height: 200,
     marginVertical: 20,
   },
   button: {
     alignItems: 'center',
     backgroundColor: '#f8f8f8',
-    padding: 20,
+    padding: 22,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -84,33 +109,34 @@ const styles = StyleSheet.create({
     width: '45%',
   },
   buttonIcon: {
-    width: 60,
-    height: 60,
-    marginTop: 7,
+    width: 65,
+    height: 65,
+    marginTop: 22,
     marginBottom: 13,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   sectionTitle: {
-    fontSize: 23,
+    fontSize: 25,
     fontWeight: 'bold',
+    marginLeft: 25,
     marginVertical: 20,
     width: '100%',
   },
   optionContainer: {
     backgroundColor: '#f8f8f8',
-    padding: 20,
+    padding: 23,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 25,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    width: '100%',
+    width: '95%',
   },
   optionHeader: {
     flexDirection: 'row',
@@ -118,18 +144,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   optionDescription: {
-    marginTop: 10,
-    fontSize: 14,
+    marginTop: 15,
+    fontSize: 17,
     color: '#666',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 20,
+    paddingVertical: 25,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     width: '100%',
@@ -138,8 +164,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerIcon: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
   },
 });
 
