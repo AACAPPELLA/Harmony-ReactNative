@@ -10,6 +10,7 @@ import EmergencyDetail from './screens/emergency/EmergencyDetail';
 import SafeDetected from './screens/emergency/SafeDetected';
 import SafeDetail from './screens/emergency/SafeDetail' 
 import ListeningChat from './screens/chat/ListeningChat';
+import MyPage from './screens/MyPage';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const App = () => {
         <Stack.Screen name="EmergencyDetail" component={EmergencyDetail} options={{headerShown: false}} />
         <Stack.Screen name="SafeDetected" component={SafeDetected} options={{headerShown: false}} />
         <Stack.Screen name="SafeDetail" component={SafeDetail} options={{headerShown: false}} />
+        <Stack.Screen name="MyPage" component={MyPage}  options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

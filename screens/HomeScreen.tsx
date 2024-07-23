@@ -52,8 +52,8 @@ const HomeScreen = () => {
         <TouchableOpacity style={styles.footerButton}>
           <Image source={require('../assets/calendar-icon.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton}>
-          <Image source={require('../assets/settings-icon.png')} style={styles.footerIcon} />
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('MyPage')}>
+          <Image source={require('../assets/settings-icon.png')} style={styles.footerIcon}/>
         </TouchableOpacity>
       </View>
     </ScrollView>
