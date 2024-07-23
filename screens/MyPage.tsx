@@ -1,19 +1,45 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const userData = {
+const initialUserData = {
   name: '김소윤',
   id: 'soyxni',
   password: '********',
   phone: '010-1234-5678',
-  disabilityType: '청각 장애',
+  disabilityType: '',
 };
 
 const MyPage = () => {
   const navigation = useNavigation();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedUserData, setEditedUserData] = useState(userData);
+  const [editedUserData, setEditedUserData] = useState(initialUserData);
+  const [error, setError] = useState(null);
+
+  // useEffect로 컴포넌트가 마운트될 때 사용자 정보 가져옴 .. 공부더해
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await fetch('/user'); // url 수정
+      const result = await response.json();
+      if (result.success) {
+        setEditedUserData({
+          name: result.data.name,
+          id: result.data.serialId,
+          password: '********', // 패스워드는 비공개 -> 수정만 가능?? 회의 때 논의
+          phone: result.data.phoneNumber,
+          disabilityType: result.data.disabled,
+        });
+      } else {
+        console.error('Error', 'Failed to fetch user data');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -23,19 +49,39 @@ const MyPage = () => {
     setIsEditing(true);
   };
 
-  const handleSavePress = () => {
-    // Save edited user data (not implemented in this example)
-    setIsEditing(false);
-    // Here you can perform the logic to save editedUserData
+  const handleSavePress = async () => {
+    try {
+      const response = await fetch('http://your-backend-url/user', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password: editedUserData.password,
+          name: editedUserData.name,
+          phoneNumber: editedUserData.phone,
+          email: 'your-email@example.com', //가입 시에는 입력X
+          eDisabled: editedUserData.disabilityType,
+        }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setIsEditing(false);
+        Alert.alert('Success', 'User data updated successfully');
+      } else {
+        console.error('Error', 'Failed to update user data');
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
   };
 
   const handleCancelPress = () => {
-    // Reset edited user data to original data
-    setEditedUserData(userData);
+    fetchUserData(); // 수정하기 취소 -> 원래 데이터 가져오기
     setIsEditing(false);
   };
 
-  const handleChange = (key, value) => {
+  const handleChange = (key: keyof typeof editedUserData, value: string) => {
     setEditedUserData({ ...editedUserData, [key]: value });
   };
 
@@ -61,6 +107,7 @@ const MyPage = () => {
             resizeMode="contain"
           />
         </View>
+        {error && <Text style={styles.errorText}>{error}</Text>}
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpName.png')} style={styles.icon} resizeMode='contain' />
@@ -212,13 +259,18 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
   },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
   editButton: {
     fontSize: 14,
     color: '#5A5A5A',
     textDecorationLine: 'underline',
     alignSelf: 'flex-start',
     marginVertical: 10,
-    marginLeft:260,
+    marginLeft: 260,
   },
   editActions: {
     marginTop: 20,
