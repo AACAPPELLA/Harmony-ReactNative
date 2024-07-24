@@ -76,7 +76,7 @@ const CalendarScreen = () => {
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('CalendarScreen')}>
           <Image source={require('../../assets/calendar-icon-navy.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('SettingsScreen')}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('MyPage')}>
           <Image source={require('../../assets/settings-icon-gray.png')} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
