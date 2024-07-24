@@ -4,10 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 
 function SharedChatScreen() {
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hello, I’m fine, how can I help you?", sender: "bot" },
-    { id: 2, text: "What is the best programming language?", sender: "user" },
-    { id: 3, text: "There are many programming languages in the market that are used in designing and building websites, various applications and other tasks. All these languages are popular in their place and in the way they are used, and many programmers learn and use them.", sender: "bot" },
-    { id: 4, text: "So explain to me more", sender: "user" }
+    { id: 1, text: "이번 회의는 000000건에 대해서 00000 논의를 해야합니다", sender: "bot" },
+    { id: 2, text: "의견 있으신 분 있나요?", sender: "user" },
+    { id: 3, text: "000해서 00000000하시죠.", sender: "bot" },
+    { id: 4, text: "저는 000하고 000하는게 나을 것 같아요.", sender: "user" }
   ]);
 
   const navigation = useNavigation();
@@ -19,6 +19,10 @@ function SharedChatScreen() {
       setMessages([...messages, { id: messages.length + 1, text: inputText, sender: "user" }]);
       setInputText("");
     }
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   const renderMessages = () => {
@@ -47,7 +51,7 @@ function SharedChatScreen() {
     } else if (selectedTab === "summary") {
       return (
         <View style={styles.summaryContainer}>
-          <Text style={styles.summaryText}>회의 종료 시에만 사용할 수 있어요</Text>
+          <Text style={styles.summaryText}>회의 종료 시에만 사용할 수 있어요.</Text>
         </View>
       );
     }
@@ -56,8 +60,8 @@ function SharedChatScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>공유 대화</Text>
       </View>
@@ -66,11 +70,14 @@ function SharedChatScreen() {
           <Text style={styles.statusMainText}>계속 내용 듣는 중</Text>
           <Text style={styles.statusSubText}>계속해서 내용을 들으며 {"\n"}텍스트로 변환하는 중이에요</Text>
         </View>
-        <TouchableOpacity style={styles.endMeetingButton} onPress={() => navigation.navigate('SetTitle')}>
-          <Text style={styles.endMeetingButtonText}>회의 종료</Text>
-        </TouchableOpacity>
-        <Image source={require('../../assets/shLoading.png')} style={styles.statusImage} />
+        <View style={styles.rightContainer}>
+          <TouchableOpacity style={styles.endMeetingButton} onPress={() => navigation.navigate('SetTitle')}>
+            <Text style={styles.endMeetingButtonText}>회의 종료</Text>
+          </TouchableOpacity>
+          <Image source={require('../../assets/shLoading.png')} style={styles.statusImage} />
+        </View>
       </View>
+
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, selectedTab === "voiceNotes" && styles.selectedTabButton]}
@@ -89,7 +96,7 @@ function SharedChatScreen() {
       <View style={styles.inputSection}>
         <TextInput
           style={styles.textInput}
-          placeholder="텍스트 및 음성으로 내용을 추가할 수 있어요"
+          placeholder="텍스트 및 음성으로 내용을 추가할 수 있어요."
           value={inputText}
           onChangeText={setInputText}
         />
@@ -110,61 +117,83 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
   },
   backButton: {
-    marginRight: 15,
-  },
-  backButtonText: {
-    fontSize: 18,
-    color: "#291695",
+    position: 'absolute',
+    left: 10,
   },
   headerTitle: {
     fontSize: 20,
-    color: "#291695",
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 15,
   },
   statusBox: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 15,
+    paddingLeft: 30,
+    paddingRight: 30,
     backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    margin: 10,
+    borderRadius: 25,
+    margin:10,
+    width:'90%',
+    paddingVertical:25,
+    alignSelf: 'center',
+    borderColor: "#EFEFEF", 
+    borderWidth: 1, 
+    shadowColor: "#000", 
+    shadowOffset: {
+      width: 2, 
+      height: 2, 
+    },
+    shadowOpacity: 0.2, 
+    shadowRadius: 3.84, 
+    elevation: 5,
   },
   statusTextContainer: {
     flex: 1,
+    flexDirection: 'column', // 세로 배치
+    alignItems: 'flex-start', // 왼쪽 정렬
+  },
+  rightContainer: {
+    flexDirection: 'column', // 세로 배치
+    alignItems: 'center', // 중앙 정렬
   },
   statusMainText: {
     fontSize: 18,
-    color: "#291695",
+    color: 'black',
     fontWeight: "bold",
   },
   statusSubText: {
-    fontSize: 14,
-    color: "#291695",
-    marginTop: 5,
+    fontSize: 16,
+    color: 'black',
+    marginTop: 10,
   },
   endMeetingButton: {
     backgroundColor: "#291695",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
+    borderRadius: 10,
   },
   endMeetingButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   statusImage: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     marginLeft: 10,
+    marginTop: 15,
+    resizeMode: 'contain',
   },
   tabContainer: {
     flexDirection: "row",
@@ -194,6 +223,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     marginVertical: 5,
+    marginHorizontal: 30,
   },
   profileCircle: {
     width: 30,
@@ -211,7 +241,7 @@ const styles = StyleSheet.create({
   messageBubble: {
     padding: 10,
     borderRadius: 10,
-    maxWidth: "70%",
+    maxWidth: "75%",
   },
   userBubble: {
     backgroundColor: "#291695",
