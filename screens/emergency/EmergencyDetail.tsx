@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
+import BackButton from '../../components/BackButton'; // Adjust the path as needed
 
 const EmergencyScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
-      </TouchableOpacity>
+      <BackButton navigation={navigation} />
       <Text style={styles.title}>긴급 상황 판단 내용</Text>
       <View style={styles.header}>
         <View style={styles.headerBox}>
@@ -40,17 +39,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
   },
-  backButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
-    padding: 5,
-    zIndex: 1, // Ensures the back button is on top
-  },
-  backButtonImage: {
-    width: 24,
-    height: 24,
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -69,7 +57,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 5, // 원하는 그림자 높이로 조정
+      height: 5,
     },
     shadowOpacity: 0.5,
     shadowRadius: 5,
@@ -105,7 +93,7 @@ const styles = StyleSheet.create({
   headerSubText3: {
     fontSize: 14,
     color: '#000',
-    marginLeft: 5, // 추가적인 간격을 위해 여백을 추가합니다.
+    marginLeft: 5,
   },
   endButton: {
     backgroundColor: '#C80136',
@@ -118,7 +106,7 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     flex: 1,
-    marginBottom: 70, // retryButton 높이만큼 마진 추가
+    marginBottom: 70,
   },
   retryButton: {
     position: 'absolute',
