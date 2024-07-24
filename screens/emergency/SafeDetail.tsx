@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import BackButton from '../../components/BackButton'; // Adjust the path as needed
 
 export default function Screen2({ navigation }) {
   return (
     <View style={styles.container}>
+      <BackButton navigation={navigation} />
       <View style={styles.titleContainer}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
-        </TouchableOpacity>
         <Text style={styles.title}>긴급 상황 판단 내용</Text>
       </View>
       <View style={styles.header}>
@@ -58,24 +57,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   titleContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
-  },
-  backButton: {
-    marginRight: 10,
-    padding: 5,
-  },
-  backButtonImage: {
-    width: 24,
-    height: 24,
-    marginRight:60,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2e2e2e',
-    alignItems: 'center',
   },
   header: {
     marginBottom: 20,
