@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 18,
+    padding: 6,
   },
   signupButton: {
     borderWidth: 1,
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: '#291695',
     fontSize: 18,
+    padding: 6,
   },
 });
 
