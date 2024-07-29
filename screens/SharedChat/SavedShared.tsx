@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const SavedShared = () => {
@@ -8,6 +8,9 @@ const SavedShared = () => {
 
   const handleTabPress = (tab) => {
     setSelectedTab(tab);
+  };
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   const summaryData = {
@@ -29,8 +32,8 @@ const SavedShared = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>저장된 대화</Text>
       </View>
@@ -68,25 +71,25 @@ const SavedShared = () => {
             {/* 여기에 음성 내용 기록을 위한 임시 데이터 */}
             <View style={styles.messageContainer}>
               <View style={[styles.messageBubble, styles.botBubble]}>
-                <Text style={[styles.messageText, styles.botText]}>상대방의 메시지 1</Text>
+                <Text style={[styles.messageText, styles.botText]}>안녕하세요. 하모니 3주차 회의 시작하겠습니다.</Text>
               </View>
               <View style={[styles.profileCircle, styles.userProfile]} />
             </View>
             <View style={styles.messageContainer}>
               <View style={[styles.messageBubble, styles.botBubble]}>
-                <Text style={[styles.messageText, styles.botText]}>상대방의 메시지 2</Text>
+                <Text style={[styles.messageText, styles.botText]}>지난 회의에 이어 오늘 회의 안건은 하모니 서비스에 대한 사용자 경험 분석입니다. 각자 준비해오신 자료를 공유하며 피드백하는 시간을 가지도록 하겠습니다. </Text>
               </View>
               <View style={[styles.profileCircle, styles.userProfile]} />
             </View>
             <View style={styles.messageContainer}>
               <View style={[styles.messageBubble, styles.botBubble]}>
-                <Text style={[styles.messageText, styles.botText]}>상대방의 메시지 3</Text>
+                <Text style={[styles.messageText, styles.botText]}>네. 혹시 추가적으로 사용자의 참여를 보다 효과적으로 이끌어내기 위해서 필요한 방안에 대한 검토가 필요할 것 같습니다. </Text>
               </View>
               <View style={[styles.profileCircle, styles.userProfile]} />
             </View>
             <View style={styles.messageContainer}>
               <View style={[styles.messageBubble, styles.botBubble]}>
-                <Text style={[styles.messageText, styles.botText]}>상대방의 메시지 4</Text>
+                <Text style={[styles.messageText, styles.botText]}>네. 그럼 실제 청각장애를 가진 제 지인을 대상으로 준비해온 사용자 경험 분석 내용 발표 시작하도록 하겠습니다. 사용자는 2024년 6월부터 ...</Text>
               </View>
               <View style={[styles.profileCircle, styles.userProfile]} />
             </View>
@@ -136,25 +139,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
   },
   backButton: {
-    marginRight: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    color: "#291695",
+    position: 'absolute',
+    left: 10,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#291695",
-    flex: 1,
-    textAlign: "center",
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 15,
   },
   savedInfoContainer: {
     padding: 20,
@@ -235,8 +237,8 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     padding: 10,
-    borderRadius: 10,
-    maxWidth: "70%",
+    borderRadius: 20,
+    maxWidth: "80%",
   },
   userBubble: {
     backgroundColor: "#291695",

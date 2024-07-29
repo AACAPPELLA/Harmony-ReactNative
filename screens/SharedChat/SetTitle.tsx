@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const SetTitle = () => {
   const [title, setTitle] = useState("");
   const navigation = useNavigation();
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>{"<"}</Text>
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>공유 대화</Text>
       </View>
@@ -39,36 +42,36 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
   },
   backButton: {
-    marginRight: 10,
-  },
-  backButtonText: {
-    fontSize: 18,
-    color: "#291695",
+    position: 'absolute',
+    left: 10,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#291695",
-    flex: 1,
-    textAlign: "center",
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 15,
   },
   setTitleContainer: {
     padding: 20,
+    marginTop: 10,
     flex: 1,
-    justifyContent: "center",
+
   },
   setTitleText: {
     fontSize: 18,
     color: "#000",
-    textAlign: "center",
-    marginBottom: 20,
+    fontWeight: 'bold',
+    marginBottom: 40,
   },
   highlight: {
     color: "#291695",
@@ -85,12 +88,18 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: "#291695",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 12,
     alignItems: "center",
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    margin: 20,
   },
   saveButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
