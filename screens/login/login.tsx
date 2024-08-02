@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../axios';
 
 const Login = ({ navigation }) => {
   const [serialId, setSerialId] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const storeTokens = async (accessToken, refreshToken) => {
+    try {
+      await AsyncStorage.setItem('accessToken', accessToken);
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+      console.log('토큰 저장 성공');
+    } catch (error) {
+      console.error('토큰 저장 오류', error);
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -21,9 +32,8 @@ const Login = ({ navigation }) => {
 
       if (response.data.success) {
         const { accessToken, refreshToken } = response.data.data;
-        // 토큰 처리 (예: 저장소에 저장, 홈 화면으로 이동 등)
-        console.log('액세스 토큰:', accessToken);
-        console.log('리프레시 토큰:', refreshToken);
+        // 토큰 저장
+        await storeTokens(accessToken, refreshToken);
         Alert.alert('로그인 성공', '성공적으로 로그인되었습니다.');
         navigation.navigate('Home');
       } else {
