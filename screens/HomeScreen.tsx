@@ -11,6 +11,7 @@ const HomeScreen = () => {
   const handleLogout = () => {
     // Handle logout logic here
     console.log('Logging out...');
+    navigation.navigate('Login');
   };
 
   return (
