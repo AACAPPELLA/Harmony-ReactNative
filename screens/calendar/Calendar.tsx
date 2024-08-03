@@ -1,3 +1,5 @@
+// CalendarScreen.js
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars';
@@ -10,7 +12,6 @@ const CalendarScreen = () => {
   const savedConversations = {
     '2024-07-18': [{ title: 'HARMONY 3차 정기 회의' }],
     '2024-07-19': [{ title: 'HARMONY 3차 정기 회의' }],
-    // Add more saved conversation data here
   };
 
   const handleDateSelect = (day) => {
@@ -58,7 +59,7 @@ const CalendarScreen = () => {
             <TouchableOpacity
               key={index}
               style={styles.conversationItem}
-              onPress={() => navigation.navigate('ConversationDetails', { date: selectedDate, title: conversation.title })}
+              onPress={() => navigation.navigate('SavedShared', { date: selectedDate, title: conversation.title })}
             >
               <Text style={styles.conversationDate}>{selectedDate}</Text>
               <Text style={styles.conversationTitle}>{conversation.title}</Text>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    marginTop: 50,
+    paddingTop: 50,
   },
   conversationsContainer: {
     padding: 15,
