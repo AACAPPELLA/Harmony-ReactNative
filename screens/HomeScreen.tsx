@@ -36,8 +36,10 @@ const HomeScreen = () => {
       <Text style={styles.sectionTitle}>기능 선택</Text>
       
       <View style={styles.optionContainer}>
-        <Text style={styles.optionTitle}>공유 대화 시작</Text>
-        <Text style={styles.optionDescription}>회의 및 수업을 시작해요! 언제 어디서나 참여하고 실시간 내용을 확인할 수 있어요!</Text>
+        <TouchableOpacity  onPress={() => navigation.navigate('SharedListeningChat')}>
+          <Text style={styles.optionTitle}>공유 대화 시작</Text>
+          <Text style={styles.optionDescription}>회의 및 수업을 시작해요! 언제 어디서나 참여하고 실시간 내용을 확인할 수 있어요!</Text>
+        </TouchableOpacity>
       </View>
       
       <View style={styles.optionContainer}>
@@ -52,7 +54,7 @@ const HomeScreen = () => {
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Calendar')}>
           <Image source={require('../assets/calendar-icon-gray.png')} style={styles.footerIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Settings')}>
+        <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('MyPage')}>
           <Image source={require('../assets/settings-icon-gray.png')} style={styles.footerIcon} />
         </TouchableOpacity>
       </View>
