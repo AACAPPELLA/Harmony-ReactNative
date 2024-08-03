@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
-import BackButton from '../../components/BackButton'; // Adjust the path as needed
+import BackButton from '../../components/BackButton'; 
 
 const EmergencyScreen = ({ navigation }) => {
   return (
@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
+    paddingTop: 58
   },
   title: {
     fontSize: 18,
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 35,
+   
   },
   headerRow: {
     flexDirection: 'row',
