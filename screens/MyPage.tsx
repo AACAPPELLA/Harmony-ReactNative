@@ -85,9 +85,6 @@ const MyPage = () => {
     setEditedUserData({ ...editedUserData, [key]: value });
   };
 
-  const handleFindPWPress = () => {
-    navigation.navigate('FindPW');
-  };
 
   return (
     <View style={styles.container}>
@@ -188,9 +185,6 @@ const MyPage = () => {
               </TouchableOpacity>
             </View>
           )}
-          <TouchableOpacity onPress={handleFindPWPress} style={styles.findPWButton}>
-            <Text style={styles.findPWButtonText}>비밀번호를 잊어버리셨나요?</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -310,16 +304,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  findPWButton: {
-    marginTop: 20,
-    alignItems: 'flex-end',
-    marginRight: 20,
-  },
-  findPWButtonText: {
-    fontSize: 14,
-    color: '#5A5A5A',
-    textDecorationLine: 'underline',
   },
 });
 
