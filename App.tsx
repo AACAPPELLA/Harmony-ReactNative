@@ -18,6 +18,7 @@ import SharedChatScreen from './screens/SharedChat/SharedChatScreen';
 import SetTitle from './screens/SharedChat/SetTitle';
 import SavedShared from './screens/SharedChat/SavedShared';
 import findPW from './screens/login/findPW';
+import resetPW from './screens/login/resetPW';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
         <Stack.Screen name="SetTitle" component={SetTitle}  options={{headerShown: false}}/>
         <Stack.Screen name="SavedShared" component={SavedShared}  options={{headerShown: false}}/>
         <Stack.Screen name="findPW" component={findPW}  options={{headerShown: false}}/>
+        <Stack.Screen name="resetPW" component={resetPW}  options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
