@@ -97,6 +97,8 @@ function SharedChatScreen() {
         <TextInput
           style={styles.textInput}
           placeholder="텍스트 및 음성으로 내용을 추가할 수 있어요."
+          placeholderTextColor="#ccc" // placeholder 텍스트 색상 설정
+          selectionColor="#291695" // 커서 색상 설정
           value={inputText}
           onChangeText={setInputText}
         />
@@ -201,8 +203,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   tabButton: {
+    flex: 1, // flex 1로 너비 조정
     paddingVertical: 10,
     paddingHorizontal: 15,
+    alignItems: 'center', // 텍스트 가운데 정렬
   },
   tabButtonText: {
     fontSize: 16,
@@ -265,29 +269,49 @@ const styles = StyleSheet.create({
   inputSection: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
+    paddingVertical: 5, // padding 조정
+    paddingHorizontal: 10, // padding 조정
+    borderRadius: 30,
+    backgroundColor: "#f9f9f9",
+    height: 55, // 높이 조정
+    width: '90%', // 가로 길이 조정
+    alignSelf: 'center', // 가운데 정렬
+    borderColor: "#EFEFEF",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 20,
   },
   textInput: {
     flex: 1,
-    padding: 10,
-    borderColor: "#ccc",
-    fontSize: 16,
-    color: "#291695",
+    paddingVertical: 0, // padding 조정
+    paddingHorizontal: 10, // padding 조정
+    fontSize: 14, // 폰트 크기 줄임
+    color: "#291695", // 텍스트 색상 설정
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    height: "100%", // 높이 조정
   },
   microphoneButton: {
-    marginRight: 10,
+    marginRight: 8,
+    justifyContent: "center", // 세로 중앙 정렬
   },
   sendButton: {
     backgroundColor: "white",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+    height: "100%", // 높이 조정
   },
   buttonIcon: {
-    width: 30,
-    height: 30,
+    width: 25, // 아이콘 크기 원래대로 유지
+    height: 25, // 아이콘 크기 원래대로 유지
   },
   summaryContainer: {
     flex: 1,
