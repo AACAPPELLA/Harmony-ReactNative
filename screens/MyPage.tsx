@@ -85,6 +85,7 @@ const MyPage = () => {
     setEditedUserData({ ...editedUserData, [key]: value });
   };
 
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

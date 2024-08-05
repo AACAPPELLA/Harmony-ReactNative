@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import BackButton from '../../components/BackButton';
 
 const SharedListeningChat = ({ navigation }) => {
   const moveChat = () => {
@@ -8,9 +9,7 @@ const SharedListeningChat = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
-      </TouchableOpacity>
+      <BackButton navigation={navigation}></BackButton>
       <Image source={require('../../assets/blue-ear.png')} style={styles.icon} />
       <Text style={styles.text}>내용을 듣고 있어요</Text>
       <View style={styles.indicatorContainer}>
@@ -35,21 +34,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
   },
-  backButton: {
-    position: 'absolute',
-    top: 10, 
-    left: 10, 
-    padding: 5,
-  },
-  backButtonImage: {
-    width: 24,
-    height: 24,
-  },
   icon: {
     width: 150,
     height: 150,
     marginBottom: 40,
-    marginTop: 120
+    marginTop: 200
   },
   text: {
     fontSize: 27,
@@ -92,6 +81,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 15,
+    marginTop: 70,
     width: '100%',
   },
   blueButtonText: {
