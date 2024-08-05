@@ -6,9 +6,8 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>WELCOME TO</Text>
-      <Text style={styles.harmony}>HARMONY</Text>
-      
+      <Image source={require('../../assets/login_logo.png')} style={styles.logo} />
+
       <View style={styles.inputContainer}>
         <Image source={require('../../assets/id.png')} style={styles.idIcon} />
         <TextInput 
@@ -54,13 +53,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
   },
-  title: {
-    fontSize: 28,
-    color: '#291695',
-  },
-  harmony: {
-    fontSize: 45,
-    color: '#291695',
+  logo: {
+    width: 200, // Adjust the width as needed
+    height: 100, // Adjust the height as needed
     marginBottom: 40,
   },
   idIcon: {
