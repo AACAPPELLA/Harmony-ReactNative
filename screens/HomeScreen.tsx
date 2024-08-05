@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../axios';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -8,9 +10,26 @@ const HomeScreen = () => {
 
   const toggleRiskMode = () => setIsRiskModeEnabled(previousState => !previousState);
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    console.log('Logging out...');
+  const handleLogout = async () => {
+    try{
+      const token = await AsyncStorage.getItem('userToken'); //토큰 가져옴
+
+      const response = await api.post('/auth/logout', {}, {
+        headers: {
+          Authorization: 'Bearer ${token}'
+        }
+      });
+
+      if(response.data.success){
+        await AsyncStorage.removeItem('userToken'); //토큰 삭제
+        console.log('토큰 삭제 성공');
+        navigation.navigate('Login');
+      }else{
+        console.error('Logout failed: ', response.data.error);
+      }
+    }catch(error){
+      console.error('Error during logout: ', error);
+    }
   };
 
   return (
