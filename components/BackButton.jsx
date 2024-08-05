@@ -1,4 +1,3 @@
-// BackButton.js
 import React from 'react';
 import { TouchableOpacity, Image, StyleSheet } from 'react-native';
 
@@ -14,7 +13,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 5,
     position: 'absolute',
-    top: 20,
+    top: 50,
     left: 20,
     zIndex: 1,
   },

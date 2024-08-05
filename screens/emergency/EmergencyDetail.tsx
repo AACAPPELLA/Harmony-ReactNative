@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   headerBox: {
     backgroundColor: '#fff',
     padding: 10,
+    marginTop: 30,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import BackButton from "../../components/BackButton";
 
-function ChatScreen() {
+function ChatScreen({ navigation }) {
   const [messages, setMessages] = useState([
     { id: 1, text: "Hello, I’m fine, how can I help you?", sender: "bot" },
     { id: 2, text: "What is the best programming language?", sender: "user" },
     { id: 3, text: "There are many programming languages in the market that are used in designing and building websites, various applications and other tasks. All these languages are popular in their place and in the way they are used, and many programmers learn and use them.", sender: "bot" },
     { id: 4, text: "So explain to me more", sender: "user" }
   ]);
-  
-  const [inputText, setInputText] = useState(""); 
+
+  const [inputText, setInputText] = useState("");
 
   const handleSend = () => {
     if (inputText.trim() !== "") {
@@ -20,6 +21,7 @@ function ChatScreen() {
 
   return (
     <View style={styles.container}>
+      <BackButton navigation={navigation} />
       <ScrollView style={styles.chatContainer}>
         {messages.map((message) => (
           <View key={message.id} style={styles.messageContainer}>
@@ -57,7 +59,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10,
+    paddingTop: 100,
+    paddingLeft: 20,
+    paddingRight: 20
   },
   chatContainer: {
     flex: 1,
@@ -115,6 +119,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingVertical: 10,
     paddingHorizontal: 20,
+    marginBottom: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
