@@ -13,6 +13,7 @@ import ListeningChat from './screens/chat/ListeningChat';
 import CalendarScreen from './screens/calendar/Calendar';
 
 import LoginScreen from './screens/login/login'
+import SignUpScreen from './screens/login/signup'
 import MyPage from './screens/MyPage';
 import SharedListeningChat from './screens/SharedChat/SharedListeningChat';
 import SharedChatScreen from './screens/SharedChat/SharedChatScreen';
@@ -26,6 +27,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />

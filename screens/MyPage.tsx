@@ -8,6 +8,7 @@ const initialUserData = {
   name: '',
   id: '',
   password: '********',
+  confirmPassword: '',
   phone: '',
   disabilityType: '',
 };
@@ -17,6 +18,8 @@ const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUserData, setEditedUserData] = useState(initialUserData);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -35,6 +38,7 @@ const MyPage = () => {
           name: response.data.data.name,
           id: response.data.data.serialId,
           password: '********', // 패스워드는 비공개 -> 수정만 가능
+          confirmPassword: '',
           phone: response.data.data.phoneNumber,
           disabilityType: response.data.data.disabled || '', // 수정 필요 시
         });
@@ -55,6 +59,11 @@ const MyPage = () => {
   };
 
   const handleSavePress = async () => {
+    if (editedUserData.password !== editedUserData.confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
     try {
       const response = await api.put('/user', {
         password: editedUserData.password,
@@ -81,6 +90,14 @@ const MyPage = () => {
 
   const handleChange = (key: keyof typeof editedUserData, value: string) => {
     setEditedUserData({ ...editedUserData, [key]: value });
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
   };
 
   return (
@@ -121,28 +138,51 @@ const MyPage = () => {
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpId.png')} style={styles.icon} resizeMode='contain' />
-            {isEditing ? (
-              <TextInput
-                style={styles.inputText}
-                value={editedUserData.id}
-                onChangeText={(text) => handleChange('id', text)}
-              />
-            ) : (
-              <Text style={styles.infoText}>{editedUserData.id}</Text>
-            )}
+            <Text style={styles.infoText}>{editedUserData.id}</Text>
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpPW.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
-              <TextInput
-                style={styles.inputText}
-                value={editedUserData.password}
-                onChangeText={(text) => handleChange('password', text)}
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.inputText}
+                  value={editedUserData.password}
+                  secureTextEntry={!showPassword}
+                  onChangeText={(text) => handleChange('password', text)}
+                />
+                <TouchableOpacity onPress={toggleShowPassword}>
+                  <Image
+                    source={showPassword ? require('../assets/eye_open.png') : require('../assets/eye_close.png')}
+                    style={styles.eyeIcon}
+                    resizeMode='contain'
+                  />
+                </TouchableOpacity>
+              </View>
             ) : (
               <Text style={styles.infoText}>{editedUserData.password}</Text>
             )}
           </View>
+          {isEditing && (
+            <View style={styles.infoRow}>
+              <Image source={require('../assets/mpPW.png')} style={styles.icon} resizeMode='contain' />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.inputText}
+                  value={editedUserData.confirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                  placeholder="비밀번호 재확인"
+                  onChangeText={(text) => handleChange('confirmPassword', text)}
+                />
+                <TouchableOpacity onPress={toggleShowConfirmPassword}>
+                  <Image
+                    source={showConfirmPassword ? require('../assets/eye_open.png') : require('../assets/eye_close.png')}
+                    style={styles.eyeIcon}
+                    resizeMode='contain'
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpTele.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
@@ -234,6 +274,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
     marginLeft: 10,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  eyeIcon: {
+    width: 20,
+    height: 20,
   },
   welcomeContainer: {
     flexDirection: 'row',
