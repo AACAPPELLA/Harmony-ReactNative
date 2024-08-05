@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   icon: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   text: {
-    fontSize: 24,
+    fontSize: 27,
     color: '#d9534f',
     fontWeight: 'bold',
   },
