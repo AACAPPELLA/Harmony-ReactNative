@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../axios'; 
 
 const initialUserData = {
-  name: '김소윤',
-  id: 'soyxni',
+  name: '',
+  id: '',
   password: '********',
-  phone: '010-1234-5678',
+  phone: '',
   disabilityType: '',
 };
 
@@ -16,22 +18,25 @@ const MyPage = () => {
   const [editedUserData, setEditedUserData] = useState(initialUserData);
   const [error, setError] = useState(null);
 
-  // useEffect로 컴포넌트가 마운트될 때 사용자 정보 가져옴 .. 공부더해
   useEffect(() => {
     fetchUserData();
   }, []);
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/user'); // url 수정
-      const result = await response.json();
-      if (result.success) {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await api.get('/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.success) {
         setEditedUserData({
-          name: result.data.name,
-          id: result.data.serialId,
-          password: '********', // 패스워드는 비공개 -> 수정만 가능?? 회의 때 논의
-          phone: result.data.phoneNumber,
-          disabilityType: result.data.disabled,
+          name: response.data.data.name,
+          id: response.data.data.serialId,
+          password: '********', // 패스워드는 비공개 -> 수정만 가능
+          phone: response.data.data.phoneNumber,
+          disabilityType: response.data.data.disabled || '', // 수정 필요 시
         });
       } else {
         console.error('Error', 'Failed to fetch user data');
@@ -51,21 +56,14 @@ const MyPage = () => {
 
   const handleSavePress = async () => {
     try {
-      const response = await fetch('http://your-backend-url/user', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          password: editedUserData.password,
-          name: editedUserData.name,
-          phoneNumber: editedUserData.phone,
-          email: 'your-email@example.com', //가입 시에는 입력X
-          eDisabled: editedUserData.disabilityType,
-        }),
+      const response = await api.put('/user', {
+        password: editedUserData.password,
+        name: editedUserData.name,
+        phoneNumber: editedUserData.phone,
+        email: 'your-email@example.com', // 가입 시에는 입력X
+        eDisabled: editedUserData.disabilityType,
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.data.success) {
         setIsEditing(false);
         Alert.alert('Success', 'User data updated successfully');
       } else {
@@ -85,12 +83,11 @@ const MyPage = () => {
     setEditedUserData({ ...editedUserData, [key]: value });
   };
 
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../assets/mpBack.png')} style={styles.icon} resizeMode='contain'/>
+          <Image source={require('../assets/mpBack.png')} style={styles.icon} resizeMode='contain' />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>MyPage</Text>
       </View>
