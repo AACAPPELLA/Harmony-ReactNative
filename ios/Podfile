@@ -5,7 +5,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+platform :ios, '10.0' # iOS 최소 버전을 적절히 설정하세요
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -23,6 +23,15 @@ target 'MyReactNativeApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  # react-native-audio 추가
+  pod 'react-native-audio', :path => '../node_modules/react-native-audio'
+  # react-native-async-storage 추가
+  pod 'RNAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+
+  # 명시적 종속성 추가
+  pod 'React-jsi', :path => "#{config[:reactNativePath]}/ReactCommon/jsi"
+  pod 'React-jsinspector', :path => "#{config[:reactNativePath]}/ReactCommon/jsinspector"
+
   target 'MyReactNativeAppTests' do
     inherit! :complete
     # Pods for testing
@@ -36,5 +45,12 @@ target 'MyReactNativeApp' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Flipper 설정 추가
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['OTHER_CFLAGS'] = '$(inherited) -DFLIPPER_ENABLED=1'
+      end
+    end
   end
 end
