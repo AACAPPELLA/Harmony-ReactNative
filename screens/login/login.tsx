@@ -11,6 +11,7 @@ const Login = ({ navigation }) => {
 
   const handleFindPWPress = () => {
     navigation.navigate('findPW');
+  }
 
   const storeTokens = async (accessToken, refreshToken) => {
     try {
