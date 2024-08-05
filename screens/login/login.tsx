@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../../axios';
 
@@ -7,6 +8,9 @@ const Login = ({ navigation }) => {
   const [serialId, setSerialId] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const handleFindPWPress = () => {
+    navigation.navigate('findPW');
 
   const storeTokens = async (accessToken, refreshToken) => {
     try {
@@ -90,6 +94,9 @@ const Login = ({ navigation }) => {
       >
         <Text style={styles.signupButtonText}>회원가입</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={handleFindPWPress} style={styles.findPWButton}>
+            <Text style={styles.findPWButtonText}>비밀번호를 잊어버리셨나요?</Text>
+          </TouchableOpacity>
     </View>
   );
 };
@@ -159,6 +166,16 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: '#291695',
     fontSize: 18,
+  },
+  findPWButton: {
+    marginTop: 20,
+    alignItems: 'flex-end',
+    marginRight: 20,
+  },
+  findPWButtonText: {
+    fontSize: 14,
+    color: '#5A5A5A',
+    textDecorationLine: 'underline',
   },
 });
 
