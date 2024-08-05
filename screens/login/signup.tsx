@@ -1,16 +1,43 @@
 import React, { useState } from 'react';
-import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import api from '../../axios';
 
-const SignUpScreen = () => {
-  const [username, setUsername] = useState('');
+const SignUpScreen = ({ navigation }) => {
+  const [serialId, setSerialId] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [age, setAge] = useState('');
 
-  const handleSignUp = () => {
-    // Handle sign up logic here
-    console.log('Sign Up');
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('비밀번호 불일치', '비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
+    try {
+      const response = await api.post('/auth/register', {
+        serialId,
+        password,
+        name,
+        phoneNumber,
+        age
+      }, {
+      });
+
+      console.log('응답:', response.data);
+
+      if (response.data.success) {
+        Alert.alert('회원가입 성공', '성공적으로 회원가입되었습니다.');
+        navigation.navigate('Login'); // 회원가입 후 로그인 페이지로 이동
+      } else {
+        Alert.alert('회원가입 실패', '회원가입에 실패했습니다. 다시 시도해 주세요.');
+      }
+    } catch (error) {
+      console.error('회원가입 오류', error);
+      Alert.alert('회원가입 오류', '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    }
   };
 
   const formatPhoneNumber = (number) => {
@@ -33,59 +60,69 @@ const SignUpScreen = () => {
         <Text style={styles.header}>HARMONY</Text>
 
         <View style={styles.top}>
-        <Text style={styles.holder}>아이디</Text>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="아이디를 입력해주세요"
-            value={username}
-            onChangeText={setUsername}
-          />
-        </View>
+          <Text style={styles.holder}>아이디</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="아이디를 입력해주세요"
+              value={serialId}
+              onChangeText={setSerialId}
+            />
+          </View>
 
-        <Text style={styles.holder}>비밀번호</Text>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="비밀번호를 입력해주세요"
-            value={password}
-            onChangeText={setPassword}
-            style={styles.textinput}
-            secureTextEntry
-          />
-          <Image source={require('../../assets/password_uncheck.png')} style={styles.icon} />
-        </View>
+          <Text style={styles.holder}>비밀번호</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="비밀번호를 입력해주세요"
+              value={password}
+              onChangeText={setPassword}
+              style={styles.textinput}
+              secureTextEntry
+            />
+            <Image source={require('../../assets/password_uncheck.png')} style={styles.icon} />
+          </View>
 
-        <Text style={styles.holder}>비밀번호 확인</Text>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="비밀번호를 한번 더 입력해주세요"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            style={styles.textinput}
-            secureTextEntry
-          />
-          <Image source={require('../../assets/password_check.png')} style={styles.icon} />
-        </View>
+          <Text style={styles.holder}>비밀번호 확인</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="비밀번호를 한번 더 입력해주세요"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              style={styles.textinput}
+              secureTextEntry
+            />
+            <Image source={require('../../assets/password_check.png')} style={styles.icon} />
+          </View>
         </View>
 
         <View style={styles.bottom}>
-        <Text style={styles.holder}>이름</Text>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="본인 이름을 입력해주세요"
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
+          <Text style={styles.holder}>이름</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="본인 이름을 입력해주세요"
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
 
-        <Text style={styles.holder}>전화번호</Text>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            placeholder="핸드폰 번호를 입력해주세요"
-            value={phoneNumber}
-            onChangeText={handlePhoneNumberChange}
-            keyboardType="numeric"
-          />
-        </View>
+          <Text style={styles.holder}>전화번호</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="핸드폰 번호를 입력해주세요"
+              value={phoneNumber}
+              onChangeText={handlePhoneNumberChange}
+              keyboardType="numeric"
+            />
+          </View>
+
+          <Text style={styles.holder}>나이</Text>
+          <View style={styles.inputContainer}>
+            <TextInput 
+              placeholder="나이를 입력해주세요"
+              value={age}
+              onChangeText={setAge}
+              keyboardType="numeric"
+            />
+          </View>
         </View>
       </ScrollView>
 
@@ -99,8 +136,8 @@ const SignUpScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  top:{
-    marginBottom:40,
+  top: {
+    marginBottom: 40,
   },
   container: {
     flex: 1,
@@ -130,7 +167,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
     flexDirection: 'row',
-    backgroundColor:'#F7F7F7',
+    backgroundColor: '#F7F7F7',
   },
   icon: {
     width: 20,

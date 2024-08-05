@@ -12,6 +12,7 @@ import SafeDetail from './screens/emergency/SafeDetail'
 import ListeningChat from './screens/chat/ListeningChat';
 import LoginScreen from './screens/login/login';
 import SignUpScrren from './screens/login/signup';
+import CalendarScreen from './screens/calendar/Calendar';
 const Stack = createStackNavigator();
 
 const App = () => {
