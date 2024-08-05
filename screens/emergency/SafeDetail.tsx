@@ -1,8 +1,30 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import BackButton from '../../components/BackButton'; // Adjust the path as needed
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import BackButton from '../../components/BackButton';
+import getSummary from '../../api/ClovaSummary';
 
 export default function Screen2({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const [summary, setSummary] = useState('');
+
+  const handleSummarize = async () => {
+    setLoading(true);
+    const text = `기내 안내방송 송출 중입니다. 
+    비행은 순조롭게 진행 중이며 모든 시스템이 정상적으로 작동하고 있습니다. 
+    안전하고 편안한 여행을 위해 다음 사항을 안내드립니다. 
+    좌석에 앉아 계실 때는 항상 좌석 벨트를 착용하시기 바랍니다.
+     곧 기내 서비스를 시작할 예정이며, 음식과 음료 서비스가 제공될 예정입니다.
+      또한 비상 탈출구의 위치와 사용 방법에 대한 안내를 드리겠습니다.`;
+
+    const result = await getSummary(text);
+    if (result) {
+      setSummary(result);
+    } else {
+      setSummary('요약 실패');
+    }
+    setLoading(false);
+  };
+
   return (
     <View style={styles.container}>
       <BackButton navigation={navigation} />
@@ -21,28 +43,23 @@ export default function Screen2({ navigation }) {
         </View>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* <View style={styles.section}>
-          <Text style={styles.sectionTitle}>주변 상황</Text>
-          <Text style={styles.sectionContent}>
-            기내 안내방송 송출 중{'\n'}
-            순조롭게 비행 중이며, 모든 시스템이 정상적으로 작동{'\n'}
-            안전하고 편안한 여행을 위해 다음 사항을 안내
-          </Text>
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>세부 내용</Text>
-          <Text style={styles.sectionContent}>
-            좌석 벨트 착용{'\n'}
-            좌석에 앉아 계실 때는 항상 좌석벨트 착용 권장{'\n'}
-            기내 서비스{'\n'}
-            곧 기내 서비스를 시작할 예정{'\n'}
-            음식과 음료 서비스 제공 예정{'\n'}
-            안전 수칙 및 명령 요령 안내{'\n'}
-            비상 탈출구 위치와 사용 방법
-          </Text>
-        </View> */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#291695" />
+        ) : (
+          <>
+            {summary ? (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>요약 결과</Text>
+                <Text style={styles.sectionContent}>{summary}</Text>
+              </View>
+            ) : null}
+          </>
+        )}
       </ScrollView>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Screen1')}>
+      <TouchableOpacity style={styles.button} onPress={handleSummarize}>
+        <Text style={styles.buttonText}>요약하기</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#d9534f', marginTop: 10 }]} onPress={() => navigation.navigate('Screen1')}>
         <Text style={styles.buttonText}>종료하기</Text>
       </TouchableOpacity>
     </View>
