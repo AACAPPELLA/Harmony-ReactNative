@@ -10,7 +10,7 @@ const initialUserData = {
   password: '********',
   confirmPassword: '',
   phone: '',
-  disabilityType: '',
+  // disabilityType: '', // 주석 처리
 };
 
 const MyPage = () => {
@@ -27,8 +27,9 @@ const MyPage = () => {
 
   const fetchUserData = async () => {
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const response = await api.get('/user', {
+      const token = await AsyncStorage.getItem('accessToken');
+      console.log('Retrieved Token:', token); // 토큰 값 출력
+      const response = await api.get('/users', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,7 +41,7 @@ const MyPage = () => {
           password: '********', // 패스워드는 비공개 -> 수정만 가능
           confirmPassword: '',
           phone: response.data.data.phoneNumber,
-          disabilityType: response.data.data.disabled || '', // 수정 필요 시
+          // disabilityType: response.data.data.disabilityType, // 주석 처리
         });
       } else {
         console.error('Error', 'Failed to fetch user data');
@@ -65,12 +66,12 @@ const MyPage = () => {
     }
 
     try {
-      const response = await api.put('/user', {
+      const response = await api.put('/users', {
         password: editedUserData.password,
         name: editedUserData.name,
         phoneNumber: editedUserData.phone,
-        email: 'your-email@example.com', // 가입 시에는 입력X
-        eDisabled: editedUserData.disabilityType,
+        //email: 'your-email@example.com', // 가입 시에는 입력X
+        // disabilityType: editedUserData.disabilityType, // 주석 처리
       });
       if (response.data.success) {
         setIsEditing(false);
@@ -195,6 +196,7 @@ const MyPage = () => {
               <Text style={styles.infoText}>{editedUserData.phone}</Text>
             )}
           </View>
+          {/*
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpCate.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
@@ -207,6 +209,7 @@ const MyPage = () => {
               <Text style={styles.infoText}>{editedUserData.disabilityType}</Text>
             )}
           </View>
+          */}
           {!isEditing && (
             <TouchableOpacity onPress={handleEditPress}>
               <Text style={styles.editButton}>수정하기</Text>

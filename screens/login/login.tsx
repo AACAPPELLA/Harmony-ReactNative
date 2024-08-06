@@ -18,6 +18,12 @@ const Login = ({ navigation }) => {
       await AsyncStorage.setItem('accessToken', accessToken);
       await AsyncStorage.setItem('refreshToken', refreshToken);
       console.log('토큰 저장 성공');
+      
+      const storedAccessToken = await AsyncStorage.getItem('accessToken');
+      const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+    
+      console.log('Stored Access Token:', storedAccessToken);
+      console.log('Stored Refresh Token:', storedRefreshToken);
     } catch (error) {
       console.error('토큰 저장 오류', error);
     }
