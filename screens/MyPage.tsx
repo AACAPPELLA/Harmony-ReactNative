@@ -7,7 +7,7 @@ import api from '../axios';
 const initialUserData = {
   name: '',
   id: '',
-  password: '********',
+  password: '',
   confirmPassword: '',
   phone: '',
   // disabilityType: '', // 주석 처리
@@ -38,7 +38,7 @@ const MyPage = () => {
         setEditedUserData({
           name: response.data.data.name,
           id: response.data.data.serialId,
-          password: '********', // 패스워드는 비공개 -> 수정만 가능
+          password: '', // 패스워드는 비공개 -> 수정만 가능
           confirmPassword: '',
           phone: response.data.data.phoneNumber,
           // disabilityType: response.data.data.disabilityType, // 주석 처리
@@ -66,12 +66,17 @@ const MyPage = () => {
     }
 
     try {
+      const token = await AsyncStorage.getItem('accessToken');
       const response = await api.put('/users', {
         password: editedUserData.password,
         name: editedUserData.name,
         phoneNumber: editedUserData.phone,
-        //email: 'your-email@example.com', // 가입 시에는 입력X
+        // email: 'your-email@example.com', // 가입 시에는 입력X
         // disabilityType: editedUserData.disabilityType, // 주석 처리
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.data.success) {
         setIsEditing(false);
@@ -149,6 +154,7 @@ const MyPage = () => {
                   style={styles.inputText}
                   value={editedUserData.password}
                   secureTextEntry={!showPassword}
+                  placeholder="새 비밀번호"
                   onChangeText={(text) => handleChange('password', text)}
                 />
                 <TouchableOpacity onPress={toggleShowPassword}>
@@ -160,7 +166,7 @@ const MyPage = () => {
                 </TouchableOpacity>
               </View>
             ) : (
-              <Text style={styles.infoText}>{editedUserData.password}</Text>
+              <Text style={styles.infoText}>********</Text>
             )}
           </View>
           {isEditing && (
