@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
@@ -19,7 +19,14 @@ import SavedShared from './screens/SharedChat/SavedShared';
 import CalendarScreen from './screens/calendar/Calendar';
 import findPW from './screens/login/findPW';
 import resetPW from './screens/login/resetPW';
+import SplashScreen from "react-native-splash-screen";
 const Stack = createStackNavigator();
+
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1000); //스플래시 활성화 시간
+  });
 
 const App = () => {
   return (
