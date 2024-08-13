@@ -1,38 +1,53 @@
 import React, { useState } from 'react';
 import { Image, View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import api from '../../axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignUpScreen = ({ navigation }) => {
-  const [serialId, setSerialId] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [age, setAge] = useState('');
 
   const handleSignUp = async () => {
     if (password !== confirmPassword) {
-      Alert.alert('비밀번호 불일치', '비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      Alert.alert('비밀번호 불일치', '비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+      console.log('비밀번호가 일치하지 않습니다.');
       return;
     }
 
     try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      if (!accessToken) {
+        Alert.alert('토큰 오류', '로그인 토큰이 없습니다.');
+        console.log('로그인 토큰이 없습니다.');
+        return;
+      }
+
+      console.log('회원가입 요청:', { serialId: username, password, name, phoneNumber });
+
       const response = await api.post('/auth/register', {
-        serialId,
+        serialId: username,
         password,
         name,
         phoneNumber,
-        age
+        age: 25 // 이 부분은 나이 입력 필드 추가 시 수정 필요
       }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
       });
 
-      console.log('응답:', response.data);
+      console.log('회원가입 응답:', response.data);
 
       if (response.data.success) {
         Alert.alert('회원가입 성공', '성공적으로 회원가입되었습니다.');
-        navigation.navigate('Login'); // 회원가입 후 로그인 페이지로 이동
+        console.log('회원가입 성공:', response.data);
+        navigation.navigate('Login');
       } else {
-        Alert.alert('회원가입 실패', '회원가입에 실패했습니다. 다시 시도해 주세요.');
+        Alert.alert('회원가입 실패', '회원가입에 실패하였습니다.');
+        console.log('회원가입 실패:', response.data.error);
       }
     } catch (error) {
       console.error('회원가입 오류', error);
@@ -64,8 +79,8 @@ const SignUpScreen = ({ navigation }) => {
           <View style={styles.inputContainer}>
             <TextInput 
               placeholder="아이디를 입력해주세요"
-              value={serialId}
-              onChangeText={setSerialId}
+              value={username}
+              onChangeText={setUsername}
             />
           </View>
 
@@ -113,16 +128,6 @@ const SignUpScreen = ({ navigation }) => {
               keyboardType="numeric"
             />
           </View>
-
-          <Text style={styles.holder}>나이</Text>
-          <View style={styles.inputContainer}>
-            <TextInput 
-              placeholder="나이를 입력해주세요"
-              value={age}
-              onChangeText={setAge}
-              keyboardType="numeric"
-            />
-          </View>
         </View>
       </ScrollView>
 
@@ -136,8 +141,8 @@ const SignUpScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  top: {
-    marginBottom: 40,
+  top:{
+    marginBottom:40,
   },
   container: {
     flex: 1,
@@ -167,7 +172,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
     flexDirection: 'row',
-    backgroundColor: '#F7F7F7',
+    backgroundColor:'#F7F7F7',
   },
   icon: {
     width: 20,

@@ -4,6 +4,53 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 const Login = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
+  const handleFindPWPress = () => {
+    navigation.navigate('findPW');
+  }
+  
+  const storeTokens = async (accessToken, refreshToken) => {
+    try {
+      await AsyncStorage.setItem('accessToken', accessToken);
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+      console.log('토큰 저장 성공');
+      
+      const storedAccessToken = await AsyncStorage.getItem('accessToken');
+      const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+    
+      console.log('Stored Access Token:', storedAccessToken);
+      console.log('Stored Refresh Token:', storedRefreshToken);
+    } catch (error) {
+      console.error('토큰 저장 오류', error);
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      console.log('로그인 시도 중:', { serialId, password });
+      const response = await api.post('/auth/login', null, {
+        params: {
+          serialId,
+          password
+        }
+      });
+
+      console.log('응답:', response.data);
+
+      if (response.data.success) {
+        const { accessToken, refreshToken } = response.data.data;
+        // 토큰 저장
+        await storeTokens(accessToken, refreshToken);
+        Alert.alert('로그인 성공', '성공적으로 로그인되었습니다.');
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('로그인 실패', '잘못된 아이디 또는 비밀번호입니다.');
+      }
+    } catch (error) {
+      console.error('로그인 오류', error);
+      Alert.alert('로그인 오류', '로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/login_logo.png')} style={styles.logo} />
