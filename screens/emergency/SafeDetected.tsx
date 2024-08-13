@@ -31,18 +31,18 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginBottom: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 27,
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#291695',
   },
   subtitle1: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#000',
     textAlign: 'center',
     marginTop: 10,
