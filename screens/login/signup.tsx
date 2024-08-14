@@ -16,17 +16,30 @@ const SignUpScreen = ({ navigation }) => {
       console.log('비밀번호가 일치하지 않습니다.');
       return;
     }
-
+  
     try {
+      // 아이디 중복 체크
+      const checkResponse = await api.get(`/auth/check/id?serialId=${username}`);
+      console.log('아이디 중복 체크 응답:', checkResponse.data);
+  
+      const { success, data, error } = checkResponse.data;
+  
+      // success가 true이고 data가 false인 경우 아이디가 사용 가능
+      if (!success || data) { // data가 true인 경우 사용 중인 아이디로 간주
+        Alert.alert('아이디 중복', '이미 사용 중인 아이디입니다. 다른 아이디를 선택해주세요.');
+        console.log('이미 사용 중인 아이디:', username);
+        return;
+      }
+  
       const accessToken = await AsyncStorage.getItem('accessToken');
       if (!accessToken) {
         Alert.alert('토큰 오류', '로그인 토큰이 없습니다.');
         console.log('로그인 토큰이 없습니다.');
         return;
       }
-
+  
       console.log('회원가입 요청:', { serialId: username, password, name, phoneNumber });
-
+  
       const response = await api.post('/auth/register', {
         serialId: username,
         password,
@@ -38,9 +51,9 @@ const SignUpScreen = ({ navigation }) => {
           Authorization: `Bearer ${accessToken}`
         }
       });
-
+  
       console.log('회원가입 응답:', response.data);
-
+  
       if (response.data.success) {
         Alert.alert('회원가입 성공', '성공적으로 회원가입되었습니다.');
         console.log('회원가입 성공:', response.data);
@@ -54,6 +67,7 @@ const SignUpScreen = ({ navigation }) => {
       Alert.alert('회원가입 오류', '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
+  
 
   const formatPhoneNumber = (number) => {
     const cleaned = ('' + number).replace(/\D/g, '');
