@@ -55,7 +55,7 @@ const Login = ({ navigation }) => {
     <View style={styles.container}>
       <Image source={require('../../assets/login_logo.png')} style={styles.logo} />
 
-      <View style={styles.inputContainer}>
+      <View style={styles.idContainer}>
         <Image source={require('../../assets/id.png')} style={styles.idIcon} />
         <TextInput 
           placeholder="아이디"
@@ -103,19 +103,29 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 200, // Adjust the width as needed
-    height: 100, // Adjust the height as needed
+    width: 200, 
+    height: 100,
     marginBottom: 40,
   },
   idIcon: {
     marginLeft: 7,
+  },
+  idContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    marginBottom: 20,
+    width: '100%',
+    backgroundColor: '#F7F7F7'
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 7,
     marginBottom: 20,
     width: '100%',
     backgroundColor: '#F7F7F7'
@@ -126,8 +136,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   eyeIcon: {
-    width: 24,
-    height: 24,
+    width: 23,
+    height: 23,
     marginLeft: 10,
   },
   loginButton: {
