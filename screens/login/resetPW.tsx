@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import api from '../../axios'; // axios 설정 파일을 import
 
 const ResetPW = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { token } = route.params; // findPW 페이지에서 넘겨준 토큰을 받음
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -13,25 +16,19 @@ const ResetPW = () => {
     if (password === confirmPassword) {
       try {
         // 비밀번호 변경 API 요청
-        const response = await fetch('https://your-backend-api.com/user', {
-          method: 'PUT',
+        const response = await api.patch('/users/password', {
+          password: password,
+        }, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer your_access_token', // 여기에 실제 토큰을 추가
-          },
-          body: JSON.stringify({
-            password: password,
-            name: 'name', // 필요에 따라 실제 값으로 교체
-            phoneNumber: 'phoneNumber', // 필요에 따라 실제 값으로 교체
-            age: 25, // 필요에 따라 실제 값으로 교체
-          }),
+            'Authorization': `Bearer ${token}`, // findPW에서 받은 토큰을 추가
+          }
         });
 
-        const result = await response.json();
+        const result = response.data;
 
         if (result.success) {
           Alert.alert('성공', '비밀번호가 변경되었습니다.');
-          navigation.navigate('login'); // login.tsx 페이지로 이동
+          navigation.navigate('Login'); // login.tsx 페이지로 이동
         } else {
           Alert.alert('오류', '비밀번호 변경에 실패했습니다.');
         }
