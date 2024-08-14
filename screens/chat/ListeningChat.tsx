@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import BackButton from '../../components/BackButton';
 
 const ListeningChat = ({ navigation }) => {
   const moveChat = () => {
@@ -8,9 +9,7 @@ const ListeningChat = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Image source={require('../../assets/goback.png')} style={styles.backButtonImage} />
-      </TouchableOpacity>
+      <BackButton navigation={navigation}></BackButton>
       <Image source={require('../../assets/blue-ear.png')} style={styles.icon} />
       <Text style={styles.text}>대화를 듣고 있어요</Text>
       <View style={styles.indicatorContainer}>
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginBottom: 40,
-    marginTop: 120
+    marginTop: 220
   },
   text: {
     fontSize: 27,

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../../axios';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const Login = ({ navigation }) => {
-  const [serialId, setSerialId] = useState('');
-  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
@@ -58,16 +53,13 @@ const Login = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>WELCOME TO</Text>
-      <Text style={styles.harmony}>HARMONY</Text>
-      
+      <Image source={require('../../assets/login_logo.png')} style={styles.logo} />
+
       <View style={styles.inputContainer}>
         <Image source={require('../../assets/id.png')} style={styles.idIcon} />
         <TextInput 
           placeholder="아이디"
           style={styles.input}
-          value={serialId}
-          onChangeText={setSerialId}
         />
       </View>
       
@@ -77,8 +69,6 @@ const Login = ({ navigation }) => {
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
-          value={password}
-          onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
           <Image 
@@ -90,20 +80,14 @@ const Login = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.loginButton}
-        onPress={handleLogin}
+        onPress={() => navigation.navigate('Home')}
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styles.signupButton}
-        onPress={() => navigation.navigate('SignUp')}
-      >
+      <TouchableOpacity style={styles.signupButton}>
         <Text style={styles.signupButtonText}>회원가입</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleFindPWPress} style={styles.findPWButton}>
-            <Text style={styles.findPWButtonText}>비밀번호를 잊어버리셨나요?</Text>
-          </TouchableOpacity>
     </View>
   );
 };
@@ -116,13 +100,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
   },
-  title: {
-    fontSize: 28,
-    color: '#291695',
-  },
-  harmony: {
-    fontSize: 45,
-    color: '#291695',
+  logo: {
+    width: 200, // Adjust the width as needed
+    height: 100, // Adjust the height as needed
     marginBottom: 40,
   },
   idIcon: {
@@ -160,6 +140,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 18,
+    padding: 6,
   },
   signupButton: {
     borderWidth: 1,
@@ -173,16 +154,7 @@ const styles = StyleSheet.create({
   signupButtonText: {
     color: '#291695',
     fontSize: 18,
-  },
-  findPWButton: {
-    marginTop: 20,
-    alignItems: 'flex-end',
-    marginRight: 20,
-  },
-  findPWButtonText: {
-    fontSize: 14,
-    color: '#5A5A5A',
-    textDecorationLine: 'underline',
+    padding: 6,
   },
 });
 
