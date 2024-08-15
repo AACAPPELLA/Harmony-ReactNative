@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import api from '../../axios';
 const Login = ({ navigation }) => {
+  const [serialId, setSerialId] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
     navigation.navigate('findPW');
   }
-  
+
   const storeTokens = async (accessToken, refreshToken) => {
     try {
       await AsyncStorage.setItem('accessToken', accessToken);
@@ -25,6 +27,11 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    if (!serialId || !password) {
+      Alert.alert('로그인 실패', '아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
     try {
       console.log('로그인 시도 중:', { serialId, password });
       const response = await api.post('/auth/login', null, {
@@ -60,6 +67,8 @@ const Login = ({ navigation }) => {
         <TextInput 
           placeholder="아이디"
           style={styles.input}
+          value={serialId}
+          onChangeText={setSerialId}
         />
       </View>
       
@@ -69,6 +78,8 @@ const Login = ({ navigation }) => {
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
           <Image 
@@ -80,7 +91,7 @@ const Login = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}
+        onPress={handleLogin}
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
@@ -103,7 +114,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 200, 
+    width: 200,
     height: 100,
     marginBottom: 40,
   },
