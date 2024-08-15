@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
-
+import api from '../../axios';
 const Login = ({ navigation }) => {
-  const [serialId, setSerialId] = useState(''); // 아이디 상태 추가
-  const [password, setPassword] = useState(''); // 비밀번호 상태 추가
+  const [serialId, setSerialId] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
     navigation.navigate('findPW');
   }
-  
+
   const storeTokens = async (accessToken, refreshToken) => {
     try {
       await AsyncStorage.setItem('accessToken', accessToken);
@@ -67,8 +67,8 @@ const Login = ({ navigation }) => {
         <TextInput 
           placeholder="아이디"
           style={styles.input}
-          value={serialId} // 아이디 입력값 바인딩
-          onChangeText={setSerialId} // 아이디 상태 업데이트
+          value={serialId}
+          onChangeText={setSerialId}
         />
       </View>
       
@@ -78,8 +78,8 @@ const Login = ({ navigation }) => {
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
-          value={password} // 비밀번호 입력값 바인딩
-          onChangeText={setPassword} // 비밀번호 상태 업데이트
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
           <Image 
@@ -91,7 +91,7 @@ const Login = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.loginButton}
-        onPress={handleLogin} // 수정된 handleLogin 함수 사용
+        onPress={handleLogin}
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 200, // Adjust the width as needed
-    height: 100, // Adjust the height as needed
+    width: 200,
+    height: 100,
     marginBottom: 40,
   },
   idIcon: {
