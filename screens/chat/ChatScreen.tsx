@@ -1,21 +1,73 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, PermissionsAndroid, Platform, Alert } from "react-native";
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 import BackButton from "../../components/BackButton";
+import { DocumentDirectoryPath } from 'react-native-fs';
 
+// 권한 요청 함수
+async function requestPermissions() {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]);
+
+      const permissionsGranted =
+        granted['android.permission.RECORD_AUDIO'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.WRITE_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.READ_EXTERNAL_STORAGE'] === PermissionsAndroid.RESULTS.GRANTED;
+
+      if (!permissionsGranted) {
+        Alert.alert(
+          "권한 필요",
+          "이 기능을 사용하려면 오디오 녹음 및 저장소 권한이 필요합니다.",
+          [{ text: "확인" }]
+        );
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.warn("권한 요청 중 오류 발생: ", err);
+      return false;
+    }
+  }
+  return true;
+}
+
+// ChatScreen 컴포넌트
 function ChatScreen({ navigation }) {
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hello, I’m fine, how can I help you?", sender: "bot" },
-    { id: 2, text: "What is the best programming language?", sender: "user" },
-    { id: 3, text: "There are many programming languages in the market that are used in designing and building websites, various applications and other tasks. All these languages are popular in their place and in the way they are used, and many programmers learn and use them.", sender: "bot" },
-    { id: 4, text: "So explain to me more", sender: "user" }
+    { id: 1, text: "안녕하세요, 무엇을 도와드릴까요?", sender: "bot" },
+    { id: 2, text: "최고의 프로그래밍 언어는 무엇인가요?", sender: "user" },
+    { id: 3, text: "시장에는 웹사이트, 애플리케이션 등을 설계하고 구축하는 데 사용되는 다양한 프로그래밍 언어가 있습니다. 이 모든 언어는 각자 쓰임새와 방식에 따라 인기가 있으며, 많은 프로그래머가 이를 배우고 사용하고 있습니다.", sender: "bot" },
+    { id: 4, text: "좀 더 설명해 주세요.", sender: "user" }
   ]);
 
   const [inputText, setInputText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const audioRecorderPlayer = new AudioRecorderPlayer();
 
   const handleSend = () => {
     if (inputText.trim() !== "") {
       setMessages([...messages, { id: messages.length + 1, text: inputText, sender: "user" }]);
       setInputText("");
+    }
+  };
+
+  const handleRecord = async () => {
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) return;
+
+    if (isRecording) {
+      const result = await audioRecorderPlayer.stopRecorder();
+      setIsRecording(false);
+      console.log(result); // 녹음된 파일 경로 출력
+    } else {
+      const path = `${DocumentDirectoryPath}/hello.m4a`; // 안전한 파일 경로 사용
+      await audioRecorderPlayer.startRecorder(path);
+      setIsRecording(true);
     }
   };
 
@@ -50,12 +102,26 @@ function ChatScreen({ navigation }) {
             <Image source={require('../../assets/send.png')} style={styles.buttonIcon} />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity onPress={handleRecord} style={styles.recordButton}>
+          <Text style={styles.recordButtonText}>{isRecording ? "녹음 중지" : "녹음 시작"}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
+  // ... 기존 스타일들 ...
+  recordButton: {
+    backgroundColor: "#FF6F61",
+    borderRadius: 30,
+    padding: 15,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  recordButtonText: {
+    color: "white",
+    fontSize: 18,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",
