@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 
 const Login = ({ navigation }) => {
+  const [serialId, setSerialId] = useState(''); // 아이디 상태 추가
+  const [password, setPassword] = useState(''); // 비밀번호 상태 추가
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
@@ -25,6 +27,11 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    if (!serialId || !password) {
+      Alert.alert('로그인 실패', '아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
     try {
       console.log('로그인 시도 중:', { serialId, password });
       const response = await api.post('/auth/login', null, {
@@ -60,6 +67,8 @@ const Login = ({ navigation }) => {
         <TextInput 
           placeholder="아이디"
           style={styles.input}
+          value={serialId} // 아이디 입력값 바인딩
+          onChangeText={setSerialId} // 아이디 상태 업데이트
         />
       </View>
       
@@ -69,6 +78,8 @@ const Login = ({ navigation }) => {
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
+          value={password} // 비밀번호 입력값 바인딩
+          onChangeText={setPassword} // 비밀번호 상태 업데이트
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
           <Image 
@@ -80,7 +91,7 @@ const Login = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}
+        onPress={handleLogin} // 수정된 handleLogin 함수 사용
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
