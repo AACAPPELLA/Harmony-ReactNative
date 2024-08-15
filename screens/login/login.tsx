@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../../axios';
 
 const Login = ({ navigation }) => {
+  const [serialId, setSerialId] = useState('');  // serialId 상태 추가
+  const [password, setPassword] = useState('');  // password 상태 추가
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
@@ -60,6 +64,8 @@ const Login = ({ navigation }) => {
         <TextInput 
           placeholder="아이디"
           style={styles.input}
+          value={serialId}
+          onChangeText={setSerialId}  // 아이디 입력값을 상태로 설정
         />
       </View>
       
@@ -69,6 +75,8 @@ const Login = ({ navigation }) => {
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
+          value={password}
+          onChangeText={setPassword}  // 비밀번호 입력값을 상태로 설정
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
           <Image 
@@ -80,7 +88,7 @@ const Login = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}
+        onPress={handleLogin}  // 수정: handleLogin 함수 호출
       >
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
@@ -93,6 +101,7 @@ const Login = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
