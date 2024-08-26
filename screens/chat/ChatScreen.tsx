@@ -1,8 +1,41 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import RNFS from 'react-native-fs'; // react-native-fs import
+import axios from 'axios'; // axios import
 import BackButton from "../../components/BackButton";
 
-function ChatScreen({ navigation }) {
+// handleSendVoiceFile 함수를 외부에서도 사용할 수 있도록 export
+export async function handleSendVoiceFile(setMessages, messages) {
+  const filePath = `${RNFS.DocumentDirectoryPath}/voice.wav`; // 로컬 음성 파일 경로를 입력하세요
+
+  try {
+    const formData = new FormData();
+    formData.append('media', {
+      uri: 'file://' + filePath,
+      type: 'audio/wav',
+      name: 'sample.wav',
+    });
+    formData.append('params', JSON.stringify({
+      language: "ko-KR",
+      completion: "sync",
+      format: "JSON"
+    }));
+
+    const response = await axios.post('https://clovaspeech-gw.ncloud.com/external/v1/8575/acc8615eab5bb8f854efd2f4b8eaef29ffd35002a3aab6cf1ad163b12d90ee02/recognizer/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CLOVASPEECH-API-KEY': '8a0ab9b49bb54bfe98e7be0c6316a78b', // CLOVA Speech API secret key
+      }
+    });
+
+    setMessages([...messages, { id: messages.length + 1, text: response.data.text, sender: "bot" }]);
+  } catch (error) {
+    console.error("Error sending voice file to CLOVA API:", error);
+    setMessages([...messages, { id: messages.length + 1, text: "Error processing the voice file.", sender: "bot" }]);
+  }
+}
+
+function ChatScreen({ navigation, route }) {
   const [messages, setMessages] = useState([
     { id: 1, text: "Hello, I’m fine, how can I help you?", sender: "bot" },
     { id: 2, text: "What is the best programming language?", sender: "user" },
@@ -12,10 +45,18 @@ function ChatScreen({ navigation }) {
 
   const [inputText, setInputText] = useState("");
 
+  // ListeningChat에서 넘어온 경우 바로 API 호출
+  React.useEffect(() => {
+    if (route.params?.triggerApiCall) {
+      handleSendVoiceFile(setMessages, messages);
+    }
+  }, [route.params]);
+
   const handleSend = () => {
     if (inputText.trim() !== "") {
       setMessages([...messages, { id: messages.length + 1, text: inputText, sender: "user" }]);
       setInputText("");
+      handleSendVoiceFile(setMessages, messages); // 음성 파일 보내기 함수 호출
     }
   };
 
