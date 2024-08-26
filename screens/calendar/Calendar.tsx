@@ -1,21 +1,72 @@
-// CalendarScreen.js
-
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, ActivityIndicator, Alert } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../../axios';  // axios를 통해 API 호출
 
 const CalendarScreen = () => {
   const navigation = useNavigation();
   const [selectedDate, setSelectedDate] = useState('');
+  const [fetchedConversations, setFetchedConversations] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const savedConversations = {
-    '2024-07-18': [{ title: 'HARMONY 3차 정기 회의' }],
-    '2024-07-19': [{ title: 'HARMONY 3차 정기 회의' }],
+  // 토큰을 AsyncStorage에서 가져오기
+  const getToken = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('accessToken');
+      return accessToken;
+    } catch (error) {
+      console.error('토큰 가져오기 오류:', error);
+      return null;
+    }
   };
 
   const handleDateSelect = (day) => {
     setSelectedDate(day.dateString);
+  };
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchConversationsForDate(selectedDate);
+    }
+  }, [selectedDate]);
+
+  // API 호출하여 해당 날짜의 대화 가져오기
+  const fetchConversationsForDate = async (date) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const accessToken = await getToken();
+      if (!accessToken) {
+        Alert.alert('토큰 없음', '로그인이 필요합니다.');
+        navigation.navigate('Login');
+        return;
+      }
+
+      console.log(`API 요청 시작: ${date}, accessToken: ${accessToken}`);
+
+      const response = await api.get(`/shares/${date}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,  // Authorization 헤더 추가
+        },
+      });
+
+      if (response.data.success) {
+        console.log('API 요청 성공:', response.data.data);
+        setFetchedConversations(response.data.data);
+      } else {
+        console.error('API 요청 실패: 성공 상태 아님', response.data);
+        setError('해당 날짜에 저장된 대화가 없습니다.');
+      }
+    } catch (error) {
+      console.error('API 요청 오류:', error);
+      setError('데이터를 가져오는 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,37 +76,16 @@ const CalendarScreen = () => {
         markedDates={{
           [selectedDate]: { selected: true, marked: true, selectedColor: '#291695' },
         }}
-        theme={{
-          backgroundColor: '#ffffff',
-          calendarBackground: '#ffffff',
-          textSectionTitleColor: '#b6c1cd',
-          textSectionTitleDisabledColor: '#999999',
-          selectedDayBackgroundColor: '#291695',
-          selectedDayTextColor: '#ffffff',
-          todayTextColor: '#ffffff',
-          todayBackgroundColor:'#000000',
-          dayTextColor: '#000000',
-          textDisabledColor: '#999999',
-          dotColor: '#00adf5',
-          selectedDotColor: '#ffffff',
-          arrowColor: '#999999',
-          disabledArrowColor: '#999999',
-          monthTextColor: 'black',
-          indicatorColor: 'black',
-          textDayFontFamily: 'monospace',
-          textMonthFontFamily: 'monospace',
-          textDayHeaderFontFamily: 'monospace',
-          textDayFontWeight: '500',
-          textMonthFontWeight: 'bold',
-          textDayHeaderFontWeight: '300',
-          textDayFontSize: 16,
-          textMonthFontSize: 16,
-          textDayHeaderFontSize: 16
-        }}
+        theme={calendarTheme}
       />
+
       <ScrollView contentContainerStyle={styles.conversationsContainer}>
-        {savedConversations[selectedDate] ? (
-          savedConversations[selectedDate].map((conversation, index) => (
+        {loading ? (
+          <ActivityIndicator size="large" color="#291695" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : fetchedConversations && fetchedConversations.length > 0 ? (
+          fetchedConversations.map((conversation, index) => (
             <TouchableOpacity
               key={index}
               style={styles.conversationItem}
@@ -70,6 +100,7 @@ const CalendarScreen = () => {
         )}
       </ScrollView>
 
+      {/* Footer */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('HomeScreen')}>
           <Image source={require('../../assets/home-icon-gray.png')} style={styles.footerIcon} />
@@ -85,6 +116,34 @@ const CalendarScreen = () => {
   );
 };
 
+const calendarTheme = {
+  backgroundColor: '#ffffff',
+  calendarBackground: '#ffffff',
+  textSectionTitleColor: '#b6c1cd',
+  textSectionTitleDisabledColor: '#999999',
+  selectedDayBackgroundColor: '#291695',
+  selectedDayTextColor: '#ffffff',
+  todayTextColor: '#ffffff',
+  todayBackgroundColor: '#000000',
+  dayTextColor: '#000000',
+  textDisabledColor: '#999999',
+  dotColor: '#00adf5',
+  selectedDotColor: '#ffffff',
+  arrowColor: '#999999',
+  disabledArrowColor: '#999999',
+  monthTextColor: 'black',
+  indicatorColor: 'black',
+  textDayFontFamily: 'monospace',
+  textMonthFontFamily: 'monospace',
+  textDayHeaderFontFamily: 'monospace',
+  textDayFontWeight: '500',
+  textMonthFontWeight: 'bold',
+  textDayHeaderFontWeight: '300',
+  textDayFontSize: 16,
+  textMonthFontSize: 16,
+  textDayHeaderFontSize: 16,
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,7 +152,7 @@ const styles = StyleSheet.create({
   },
   conversationsContainer: {
     padding: 15,
-    paddingBottom: 70, // Ensure content does not overlap with footer
+    paddingBottom: 70, 
   },
   conversationItem: {
     backgroundColor: '#f8f8f8',
@@ -121,6 +180,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -130,7 +195,7 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'absolute',
     bottom: 0,
-    backgroundColor: '#fff', // Ensure footer background matches app background
+    backgroundColor: '#fff', 
   },
   footerButton: {
     alignItems: 'center',
