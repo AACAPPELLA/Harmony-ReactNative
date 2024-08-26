@@ -1,28 +1,63 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator } from 'react-native';
 import BackButton from '../../components/BackButton';
 import getSummary from '../../api/ClovaSummary';
+import { TouchableOpacity } from 'react-native';
+import PushNotification from 'react-native-push-notification';
 
-export default function Screen2({ navigation }) {
-  const [loading, setLoading] = useState(false);
+export default function SafeDetail({ navigation }) {
+  const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState('');
+  const [shortSummary, setShortSummary] = useState('');
+  const [filteredSummary, setFilteredSummary] = useState('');
+  const [showFilteredSummary, setShowFilteredSummary] = useState(false);
 
-  const handleSummarize = async () => {
-    setLoading(true);
-    const text = `기내 안내방송 송출 중입니다. 
-    비행은 순조롭게 진행 중이며 모든 시스템이 정상적으로 작동하고 있습니다. 
-    안전하고 편안한 여행을 위해 다음 사항을 안내드립니다. 
-    좌석에 앉아 계실 때는 항상 좌석 벨트를 착용하시기 바랍니다.
-     곧 기내 서비스를 시작할 예정이며, 음식과 음료 서비스가 제공될 예정입니다.
-      또한 비상 탈출구의 위치와 사용 방법에 대한 안내를 드리겠습니다.`;
+  useEffect(() => {
+    const fetchSummary = async () => {
+      const text = `안녕하십니까, 승객 여러분. 항공편에 탑승해 주셔서 감사합니다. 기내에서의 편안하고 안전한 여행을 위해 몇 가지 중요한 안내 말씀을 드리겠습니다. 
+현재 비행기는 순조롭게 항로를 따라 이동 중이며, 예상 도착 시간은 3시간 후로 예정되어 있습니다. 기내에서는 비행 중 내내 승무원의 지시에 따라주시고, 좌석 벨트 착용 신호등이 켜져 있을 때는 반드시 좌석 벨트를 착용해 주시기 바랍니다. 기내에서 이동할 때는 앞 좌석이나 손잡이를 꼭 잡고 이동해 주시기 바랍니다. 비상시에는 좌석 아래 또는 상단 수납칸에 위치한 구명조끼를 착용하시고, 비상구는 앞뒤로 각각 두 곳씩 위치해 있으니 비상시에 승무원의 안내를 따라 침착하게 대피해 주시기 바랍니다. 
+또한, 기내에서는 전자기기 사용이 제한되며, 이륙 및 착륙 시에는 모든 전자기기를 반드시 비행기 모드로 전환해 주시거나 전원을 꺼주시기 바랍니다. 
+이번 비행에서는 특별한 기내 서비스로 다양한 음료와 간식이 제공될 예정입니다. 메뉴는 좌석 주머니에 비치된 안내 책자를 참고하시기 바라며, 알레르기가 있으신 승객께서는 미리 승무원에게 알려주시면 대체 메뉴를 제공해 드리겠습니다. 
+항공사에서는 모든 승객의 편의를 위해 깨끗하고 위생적인 기내 환경을 유지하고 있으며, 필요시 언제든지 승무원에게 요청해 주시면 최대한 빠르게 도와드리겠습니다. 이번 항공편을 이용해 주셔서 다시 한번 감사드리며, 여러분의 안전하고 편안한 여행을 기원합니다. 감사합니다.`;
 
-    const result = await getSummary(text);
-    if (result) {
-      setSummary(result);
-    } else {
-      setSummary('요약 실패');
+      const fullSummary = await getSummary(text);
+      const shortSummary = await getSummary(fullSummary);
+
+      if (fullSummary) {
+        setSummary(fullSummary);
+        setShortSummary(shortSummary);
+        filterDangerousLines(fullSummary);
+      } else {
+        setSummary('요약 실패');
+      }
+      setLoading(false);
+    };
+
+    const filterDangerousLines = (text) => {
+      const keywords = ['비상', '위험', '구명조끼', '대피', '비상구'];
+      const lines = text.split('\n');
+      const filtered = lines.filter(line => keywords.some(keyword => line.includes(keyword)));
+      setFilteredSummary(filtered.join('\n'));
+    };
+
+    fetchSummary();
+  }, []);
+
+  const toggleSummary = () => {
+    setShowFilteredSummary(!showFilteredSummary);
+
+    if (!showFilteredSummary) {
+      console.log('Sending notification:', filteredSummary);
+      PushNotification.localNotification({
+        channelId: "1234", // App.js에서 설정한 채널 ID 동일
+        title: '간략히 보기 내용', 
+        message: filteredSummary,
+        playSound: true, // 알림 소리 설정
+        soundName: 'default', // 기본 알림 소리
+        importance: 'high', // 중요도 설정
+        vibrate: true, // 진동 설정
+      });
     }
-    setLoading(false);
   };
 
   return (
@@ -46,20 +81,26 @@ export default function Screen2({ navigation }) {
         {loading ? (
           <ActivityIndicator size="large" color="#291695" />
         ) : (
-          <>
-            {summary ? (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>요약 결과</Text>
-                <Text style={styles.sectionContent}>{summary}</Text>
-              </View>
-            ) : null}
-          </>
+          summary && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>요약 결과</Text>
+              <Text style={styles.sectionContent}>{summary}</Text>
+              {showFilteredSummary && (
+                <Text style={styles.filteredSummary}>{filteredSummary}</Text>
+              )}
+              <TouchableOpacity onPress={toggleSummary}>
+                <Text style={styles.toggleText}>
+                  {showFilteredSummary ? '중요한 내용 숨기기' : '중요한 내용 보기'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )
         )}
       </ScrollView>
-      <TouchableOpacity style={styles.button} onPress={handleSummarize}>
-        <Text style={styles.buttonText}>요약하기</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#d9534f', marginTop: 10 }]} onPress={() => navigation.navigate('Screen1')}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: '#291695', marginTop: 10 }]}
+        onPress={() => navigation.navigate('Screen1')}
+      >
         <Text style={styles.buttonText}>종료하기</Text>
       </TouchableOpacity>
     </View>
@@ -135,6 +176,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#7d7d7d',
     lineHeight: 22,
+  },
+  filteredSummary: {
+    fontSize: 14,
+    color: '#ff0000', // 강조하기 위해 다른 색상으로 변경 가능
+    marginTop: 10,
+  },
+  toggleText: {
+    color: '#291695',
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   button: {
     backgroundColor: '#291695',
