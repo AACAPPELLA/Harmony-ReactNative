@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // 이 부분 추가
 import api from '../../axios';
+
 const Login = ({ navigation }) => {
   const [serialId, setSerialId] = useState('');
   const [password, setPassword] = useState('');
@@ -8,17 +10,17 @@ const Login = ({ navigation }) => {
 
   const handleFindPWPress = () => {
     navigation.navigate('findPW');
-  }
+  };
 
   const storeTokens = async (accessToken, refreshToken) => {
     try {
       await AsyncStorage.setItem('accessToken', accessToken);
       await AsyncStorage.setItem('refreshToken', refreshToken);
       console.log('토큰 저장 성공');
-      
+
       const storedAccessToken = await AsyncStorage.getItem('accessToken');
       const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-    
+
       console.log('Stored Access Token:', storedAccessToken);
       console.log('Stored Refresh Token:', storedRefreshToken);
     } catch (error) {
@@ -37,8 +39,8 @@ const Login = ({ navigation }) => {
       const response = await api.post('/auth/login', null, {
         params: {
           serialId,
-          password
-        }
+          password,
+        },
       });
 
       console.log('응답:', response.data);
@@ -64,17 +66,17 @@ const Login = ({ navigation }) => {
 
       <View style={styles.idContainer}>
         <Image source={require('../../assets/id.png')} style={styles.idIcon} />
-        <TextInput 
+        <TextInput
           placeholder="아이디"
           style={styles.input}
           value={serialId}
           onChangeText={setSerialId}
         />
       </View>
-      
+
       <View style={styles.inputContainer}>
         <Image source={require('../../assets/password.png')} style={styles.passwordIcon} />
-        <TextInput 
+        <TextInput
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
@@ -82,23 +84,18 @@ const Login = ({ navigation }) => {
           onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-          <Image 
-            source={passwordVisible ? require('../../assets/eye_open.png') : require('../../assets/eye_close.png')} 
-            style={styles.eyeIcon} 
+          <Image
+            source={passwordVisible ? require('../../assets/eye_open.png') : require('../../assets/eye_close.png')}
+            style={styles.eyeIcon}
           />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity 
-        style={styles.loginButton}
-        onPress={handleLogin}
-      >
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-         style={styles.signupButton}
-         onPress={() => navigation.navigate('SignUp')}>
+      <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('SignUp')}>
         <Text style={styles.signupButtonText}>회원가입</Text>
       </TouchableOpacity>
     </View>
@@ -129,7 +126,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     marginBottom: 20,
     width: '100%',
-    backgroundColor: '#F7F7F7'
+    backgroundColor: '#F7F7F7',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -139,7 +136,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     marginBottom: 20,
     width: '100%',
-    backgroundColor: '#F7F7F7'
+    backgroundColor: '#F7F7F7',
   },
   input: {
     flex: 1,

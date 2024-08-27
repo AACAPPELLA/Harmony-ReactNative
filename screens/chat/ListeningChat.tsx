@@ -4,7 +4,8 @@ import BackButton from '../../components/BackButton';
 
 const ListeningChat = ({ navigation }) => {
   const moveChat = () => {
-    navigation.navigate('ChatScreen');
+    // ChatScreen으로 넘어가면서 triggerApiCall을 true로 전달
+    navigation.navigate('ChatScreen', { triggerApiCall: true });
   };
 
   return (
@@ -26,6 +27,7 @@ const ListeningChat = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
