@@ -29,16 +29,17 @@ const SharedListeningChat = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between', // 요소를 위, 아래로 분산
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
+    paddingVertical: 40, // 안전한 여백 추가
   },
   icon: {
     width: 150,
     height: 150,
     marginBottom: 40,
-    marginTop: 200
+    marginTop: 200,
   },
   text: {
     fontSize: 27,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 180,
+    marginBottom: 40, // 간격 조정
   },
   indicatorInactive: {
     width: 8,
@@ -71,25 +72,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  confirmationText: {
-    fontSize: 20,
-    color: '#291695',
-    marginBottom: 15,
-  },
   blueButton: {
     backgroundColor: '#291695',
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 15,
-    marginTop: 70,
-    width: '100%',
+    width: '100%', // 버튼이 전체 너비를 차지하도록
   },
   blueButtonText: {
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-  }
+  },
 });
 
 export default SharedListeningChat;

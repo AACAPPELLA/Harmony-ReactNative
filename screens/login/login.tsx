@@ -5,7 +5,7 @@ const Login = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
-    navigation.navigate('findPW');
+    navigation.navigate('FindPW');
   }
   
   const storeTokens = async (accessToken, refreshToken) => {

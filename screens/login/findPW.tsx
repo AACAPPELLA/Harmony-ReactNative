@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } fro
 import { useNavigation } from '@react-navigation/native';
 import api from '../../axios'; // API 호출을 위해 axios 인스턴스를 import
 
-const findPW = () => {
+const FindPW = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState({
     name: '',
@@ -155,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default findPW;
+export default FindPW;
