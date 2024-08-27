@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView,
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../axios'; 
+import BackButton from '../components/BackButton';
 
 const initialUserData = {
   name: '',
@@ -109,9 +110,7 @@ const MyPage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../assets/mpBack.png')} style={styles.icon} resizeMode='contain' />
-        </TouchableOpacity>
+      <BackButton navigation={navigation} />
         <Text style={styles.headerTitle}>MyPage</Text>
       </View>
       <ScrollView>

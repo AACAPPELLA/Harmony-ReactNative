@@ -61,11 +61,13 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
       
+      {/* 
       <View style={styles.optionContainer}>
         <Text style={styles.optionTitle}>나의 소리</Text>
         <Text style={styles.optionDescription}>다시 설명할 필요 없이 필요할 때 언제 어디서나 나의 필담을 공유할 수 있어요!</Text>
       </View>
-
+      */}
+      
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Home')}>
           <Image source={require('../assets/home-icon-navy.png')} style={styles.footerIcon} />
