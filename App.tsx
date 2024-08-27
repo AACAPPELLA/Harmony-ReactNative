@@ -18,7 +18,7 @@ import SharedChatScreen from './screens/SharedChat/SharedChatScreen';
 import SetTitle from './screens/SharedChat/SetTitle';
 import SavedShared from './screens/SharedChat/SavedShared';
 import CalendarScreen from './screens/calendar/Calendar';
-import FindPW from './screens/login/FindPW';
+import FindPW from './screens/login/findPW';
 import resetPW from './screens/login/resetPW';
 const Stack = createStackNavigator();
 

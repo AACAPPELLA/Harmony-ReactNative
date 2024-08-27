@@ -80,7 +80,7 @@ const MyPage = () => {
       });
       if (response.data.success) {
         setIsEditing(false);
-        Alert.alert('Success', 'User data updated successfully');
+        Alert.alert('수정 성공!', '회원님의 정보를 성공적으로 수정하였습니다.');
       } else {
         console.error('Error', 'Failed to update user data');
       }

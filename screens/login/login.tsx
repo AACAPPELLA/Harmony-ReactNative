@@ -1,22 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // 이 부분 추가
+import api from '../../axios';
 
 const Login = ({ navigation }) => {
+  const [serialId, setSerialId] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFindPWPress = () => {
-    navigation.navigate('FindPW');
-  }
-  
+    navigation.navigate('findPW');
+  };
+
   const storeTokens = async (accessToken, refreshToken) => {
     try {
       await AsyncStorage.setItem('accessToken', accessToken);
       await AsyncStorage.setItem('refreshToken', refreshToken);
       console.log('토큰 저장 성공');
-      
+
       const storedAccessToken = await AsyncStorage.getItem('accessToken');
       const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
-    
+
       console.log('Stored Access Token:', storedAccessToken);
       console.log('Stored Refresh Token:', storedRefreshToken);
     } catch (error) {
@@ -25,13 +29,18 @@ const Login = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    if (!serialId || !password) {
+      Alert.alert('로그인 실패', '아이디와 비밀번호를 입력해주세요.');
+      return;
+    }
+
     try {
       console.log('로그인 시도 중:', { serialId, password });
       const response = await api.post('/auth/login', null, {
         params: {
           serialId,
-          password
-        }
+          password,
+        },
       });
 
       console.log('응답:', response.data);
@@ -55,37 +64,38 @@ const Login = ({ navigation }) => {
     <View style={styles.container}>
       <Image source={require('../../assets/login_logo.png')} style={styles.logo} />
 
-      <View style={styles.inputContainer}>
+      <View style={styles.idContainer}>
         <Image source={require('../../assets/id.png')} style={styles.idIcon} />
-        <TextInput 
+        <TextInput
           placeholder="아이디"
           style={styles.input}
+          value={serialId}
+          onChangeText={setSerialId}
         />
       </View>
-      
+
       <View style={styles.inputContainer}>
         <Image source={require('../../assets/password.png')} style={styles.passwordIcon} />
-        <TextInput 
+        <TextInput
           placeholder="비밀번호"
           secureTextEntry={!passwordVisible}
           style={styles.input}
+          value={password}
+          onChangeText={setPassword}
         />
         <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-          <Image 
-            source={passwordVisible ? require('../../assets/eye_open.png') : require('../../assets/eye_close.png')} 
-            style={styles.eyeIcon} 
+          <Image
+            source={passwordVisible ? require('../../assets/eye_open.png') : require('../../assets/eye_close.png')}
+            style={styles.eyeIcon}
           />
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity 
-        style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}
-      >
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.signupButton}>
+      <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('SignUp')}>
         <Text style={styles.signupButtonText}>회원가입</Text>
       </TouchableOpacity>
     </View>
@@ -101,22 +111,32 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   logo: {
-    width: 200, // Adjust the width as needed
-    height: 100, // Adjust the height as needed
+    width: 200,
+    height: 100,
     marginBottom: 40,
   },
   idIcon: {
     marginLeft: 7,
+  },
+  idContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    marginBottom: 20,
+    width: '100%',
+    backgroundColor: '#F7F7F7',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 5,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 7,
     marginBottom: 20,
     width: '100%',
-    backgroundColor: '#F7F7F7'
+    backgroundColor: '#F7F7F7',
   },
   input: {
     flex: 1,
@@ -124,8 +144,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   eyeIcon: {
-    width: 24,
-    height: 24,
+    width: 23,
+    height: 23,
     marginLeft: 10,
   },
   loginButton: {
