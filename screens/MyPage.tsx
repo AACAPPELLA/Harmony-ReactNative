@@ -29,7 +29,6 @@ const MyPage = () => {
   const fetchUserData = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      console.log('Retrieved Token:', token); // 토큰 값 출력
       const response = await api.get('/users', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -81,7 +80,7 @@ const MyPage = () => {
       });
       if (response.data.success) {
         setIsEditing(false);
-        Alert.alert('Success', 'User data updated successfully');
+        Alert.alert('수정 성공!', '회원님의 정보를 성공적으로 수정하였습니다.');
       } else {
         console.error('Error', 'Failed to update user data');
       }
@@ -232,6 +231,21 @@ const MyPage = () => {
           )}
         </View>
       </ScrollView>
+
+      {/* Conditionally render the footer navigation bar */}
+      {!isEditing && (
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Home')}>
+            <Image source={require('../assets/home-icon-gray.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Calendar')}>
+            <Image source={require('../assets/calendar-icon-gray.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('MyPage')}>
+            <Image source={require('../assets/settings-icon-navy.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -358,6 +372,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    width: '100%',
+  },
+  footerButton: {
+    alignItems: 'center',
+  },
+  footerIcon: {
+    width: 35,
+    height: 35,
   },
 });
 
