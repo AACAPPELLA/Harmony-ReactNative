@@ -1,8 +1,47 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image } from 'react-native';
-import BackButton from '../../components/BackButton'; // Adjust the path as needed
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import RNFS from 'react-native-fs';
+import axios from 'axios';
+import BackButton from '../../components/BackButton';
+
+// Clova Speech API handler for EmergencyScreen
+async function handleEmergencyVoiceRecognition(setMessages, messages) {
+  const filePath = `${RNFS.DocumentDirectoryPath}/voice.wav`; // Update with correct file path
+
+  try {
+    const formData = new FormData();
+    formData.append('media', {
+      uri: 'file://' + filePath,
+      type: 'audio/wav',
+      name: 'voice.wav',
+    });
+    formData.append('params', JSON.stringify({
+      language: "ko-KR",
+      completion: "sync",
+      format: "JSON"
+    }));
+
+    const response = await axios.post('https://clovaspeech-gw.ncloud.com/external/v1/8575/acc8615eab5bb8f854efd2f4b8eaef29ffd35002a3aab6cf1ad163b12d90ee02/recognizer/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-CLOVASPEECH-API-KEY': '8a0ab9b49bb54bfe98e7be0c6316a78b',
+      }
+    });
+
+    setMessages([...messages, { id: messages.length + 1, text: response.data.text, sender: "bot" }]);
+  } catch (error) {
+    console.error("Error with Clova Speech API:", error);
+    setMessages([...messages, { id: messages.length + 1, text: "Error processing the emergency voice file.", sender: "bot" }]);
+  }
+}
 
 const EmergencyScreen = ({ navigation }) => {
+  const [messages, setMessages] = useState([]);
+
+  const handleRetryListening = () => {
+    handleEmergencyVoiceRecognition(setMessages, messages);
+  };
+
   return (
     <View style={styles.container}>
       <BackButton navigation={navigation} />
@@ -23,9 +62,13 @@ const EmergencyScreen = ({ navigation }) => {
         </View>
       </View>
       <ScrollView style={styles.messagesContainer}>
-        {/* 메시지 목록이 들어갈 ScrollView */}
+        {messages.map((message) => (
+          <View key={message.id} style={styles.messageBubble}>
+            <Text style={styles.messageText}>{message.text}</Text>
+          </View>
+        ))}
       </ScrollView>
-      <TouchableOpacity style={styles.retryButton}>
+      <TouchableOpacity style={styles.retryButton} onPress={handleRetryListening}>
         <Text style={styles.retryButtonText}>다시 듣기</Text>
       </TouchableOpacity>
     </View>
@@ -38,11 +81,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     justifyContent: 'flex-end',
+    paddingTop: 60
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 0,
     color: '#2e2e2e',
     alignSelf: 'center',
   },
@@ -109,6 +153,16 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 70,
   },
+  messageBubble: {
+    backgroundColor: '#f1f1f1',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  messageText: {
+    fontSize: 16,
+    color: '#000',
+  },
   retryButton: {
     position: 'absolute',
     bottom: 20,
@@ -127,3 +181,5 @@ const styles = StyleSheet.create({
 });
 
 export default EmergencyScreen;
+
+

@@ -2,16 +2,17 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import BackButton from '../../components/BackButton';
 
-const SharedListeningChat = ({ navigation }) => {
+const ListeningChat = ({ navigation }) => {
   const moveChat = () => {
-    navigation.navigate('SharedChatScreen');
+    // ChatScreen으로 넘어가면서 triggerApiCall을 true로 전달
+    navigation.navigate('SharedChatScreen', { triggerApiCall: true });
   };
 
   return (
     <View style={styles.container}>
       <BackButton navigation={navigation}></BackButton>
       <Image source={require('../../assets/blue-ear.png')} style={styles.icon} />
-      <Text style={styles.text}>내용을 듣고 있어요</Text>
+      <Text style={styles.text}>대화를 듣고 있어요</Text>
       <View style={styles.indicatorContainer}>
         <View style={styles.indicatorInactive} />
         <View style={styles.indicatorInactive} />
@@ -26,6 +27,7 @@ const SharedListeningChat = ({ navigation }) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -34,11 +36,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
   },
+  backButton: {
+    position: 'absolute',
+    top: 10, 
+    left: 10, 
+    padding: 5,
+  },
+  backButtonImage: {
+    width: 24,
+    height: 24,
+  },
   icon: {
     width: 150,
     height: 150,
     marginBottom: 40,
-    marginTop: 200
+    marginTop: 220
   },
   text: {
     fontSize: 27,
@@ -77,11 +89,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   blueButton: {
+    marginTop: 45,
     backgroundColor: '#291695',
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 15,
-    marginTop: 70,
     width: '100%',
   },
   blueButtonText: {
@@ -92,4 +104,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SharedListeningChat;
+export default ListeningChat;

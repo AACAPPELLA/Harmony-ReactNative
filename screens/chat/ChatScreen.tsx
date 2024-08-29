@@ -1,19 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
 import RNFS from 'react-native-fs'; // react-native-fs import
 import axios from 'axios'; // axios import
 import BackButton from "../../components/BackButton";
 
 // handleSendVoiceFile 함수를 외부에서도 사용할 수 있도록 export
-export async function handleSendVoiceFile(setMessages, messages) {
-  const filePath = `${RNFS.DocumentDirectoryPath}/voice.wav`; // 로컬 음성 파일 경로를 입력하세요
+export async function handleSendVoiceFile(setMessages) {
+  const filePath = `${RNFS.DocumentDirectoryPath}/daily2.wav`; // 로컬 음성 파일 경로를 입력하세요
+  console.log("Voice file path:", filePath);
+
+  // 파일이 존재하는지 확인
+  const fileExists = await RNFS.exists(filePath);
+  if (!fileExists) {
+    console.error("File does not exist at path:", filePath);
+    setMessages(prevMessages => [
+      ...prevMessages,
+      { id: prevMessages.length + 1, text: "Voice file not found.", sender: "bot" }
+    ]);
+    return;
+  }
 
   try {
     const formData = new FormData();
     formData.append('media', {
       uri: 'file://' + filePath,
       type: 'audio/wav',
-      name: 'sample.wav',
+      name: 'daily2.wav',
     });
     formData.append('params', JSON.stringify({
       language: "ko-KR",
@@ -21,17 +33,54 @@ export async function handleSendVoiceFile(setMessages, messages) {
       format: "JSON"
     }));
 
-    const response = await axios.post('https://clovaspeech-gw.ncloud.com/external/v1/8575/acc8615eab5bb8f854efd2f4b8eaef29ffd35002a3aab6cf1ad163b12d90ee02/recognizer/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'X-CLOVASPEECH-API-KEY': '8a0ab9b49bb54bfe98e7be0c6316a78b', // CLOVA Speech API secret key
+    const response = await axios.post(
+      'https://clovaspeech-gw.ncloud.com/external/v1/8575/acc8615eab5bb8f854efd2f4b8eaef29ffd35002a3aab6cf1ad163b12d90ee02/recognizer/upload',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-CLOVASPEECH-API-KEY': '8a0ab9b49bb54bfe98e7be0c6316a78b', // CLOVA Speech API secret key
+        }
       }
-    });
+    );
 
-    setMessages([...messages, { id: messages.length + 1, text: response.data.text, sender: "bot" }]);
+    // API 응답에서 텍스트를 확인하고, 메시지에 추가
+    if (response.data && response.data.text) {
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: response.data.text, sender: "bot" }
+      ]);
+    } else {
+      console.error("Unexpected response structure:", response.data);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: "Failed to retrieve text from voice file.", sender: "bot" }
+      ]);
+    }
   } catch (error) {
-    console.error("Error sending voice file to CLOVA API:", error);
-    setMessages([...messages, { id: messages.length + 1, text: "Error processing the voice file.", sender: "bot" }]);
+    console.error("Error sending voice file to CLOVA API:", error.message);
+    if (error.response) {
+      // 서버 응답이 있는 경우
+      console.error("Error response data:", error.response.data);
+      console.error("Error response status:", error.response.status);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: `Error ${error.response.status}: ${error.response.data.message}`, sender: "bot" }
+      ]);
+    } else if (error.request) {
+      // 응답을 받지 못한 경우
+      console.error("No response received:", error.request);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: "No response from the server.", sender: "bot" }
+      ]);
+    } else {
+      // 기타 오류
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: "Error processing the voice file.", sender: "bot" }
+      ]);
+    }
   }
 }
 
@@ -45,18 +94,19 @@ function ChatScreen({ navigation, route }) {
 
   const [inputText, setInputText] = useState("");
 
-  // ListeningChat에서 넘어온 경우 바로 API 호출
-  React.useEffect(() => {
-    if (route.params?.triggerApiCall) {
-      handleSendVoiceFile(setMessages, messages);
-    }
-  }, [route.params]);
+  // 페이지에 들어가자마자 음성 파일 전송
+  useEffect(() => {
+    handleSendVoiceFile(setMessages);
+  }, []);
 
   const handleSend = () => {
     if (inputText.trim() !== "") {
-      setMessages([...messages, { id: messages.length + 1, text: inputText, sender: "user" }]);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        { id: prevMessages.length + 1, text: inputText, sender: "user" }
+      ]);
       setInputText("");
-      handleSendVoiceFile(setMessages, messages); // 음성 파일 보내기 함수 호출
+      handleSendVoiceFile(setMessages); // 음성 파일 보내기 함수 호출
     }
   };
 
@@ -95,7 +145,6 @@ function ChatScreen({ navigation, route }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

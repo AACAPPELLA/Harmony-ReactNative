@@ -109,7 +109,6 @@ const MyPage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <BackButton navigation={navigation} />
         <Text style={styles.headerTitle}>MyPage</Text>
       </View>
       <ScrollView>
@@ -376,7 +375,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 20,
+    paddingVertical: 30,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     width: '100%',

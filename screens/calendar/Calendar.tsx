@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 45,
+    paddingVertical: 30,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     width: '100%',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BackButton from '../../components/BackButton';
 
 const SavedShared = () => {
   const navigation = useNavigation();
@@ -32,9 +33,7 @@ const SavedShared = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
-        </TouchableOpacity>
+       <BackButton navigation={navigation}></BackButton>
         <Text style={styles.headerTitle}>저장된 대화</Text>
       </View>
       <View style={styles.savedInfoContainer}>
@@ -143,6 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 18,
+    paddingTop: 60
   },
   backButton: {
     position: 'absolute',
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    paddingHorizontal: 30
   },
   savedTitle: {
     fontSize: 18,

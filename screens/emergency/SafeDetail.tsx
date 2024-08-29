@@ -1,29 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import BackButton from '../../components/BackButton';
-import getSummary from '../../api/ClovaSummary';
+import getSummary from '../../api/ClovaSummary'; // 요약 API 모듈
+import { handleSendVoiceFile } from '../chat/ChatScreen';
 
 export default function Screen2({ navigation }) {
   const [loading, setLoading] = useState(false);
-  const [summary, setSummary] = useState('');
+  const [recognizedText, setRecognizedText] = useState(''); // 음성 인식 결과
+  const [summary, setSummary] = useState(''); // 요약 결과
 
-  const handleSummarize = async () => {
+  // useCallback을 사용하여 handleSummarize가 매 렌더링마다 새로 생성되지 않도록 함
+  const handleSummarize = useCallback(async () => {
     setLoading(true);
-    const text = `기내 안내방송 송출 중입니다. 
-    비행은 순조롭게 진행 중이며 모든 시스템이 정상적으로 작동하고 있습니다. 
-    안전하고 편안한 여행을 위해 다음 사항을 안내드립니다. 
-    좌석에 앉아 계실 때는 항상 좌석 벨트를 착용하시기 바랍니다.
-     곧 기내 서비스를 시작할 예정이며, 음식과 음료 서비스가 제공될 예정입니다.
-      또한 비상 탈출구의 위치와 사용 방법에 대한 안내를 드리겠습니다.`;
 
-    const result = await getSummary(text);
-    if (result) {
-      setSummary(result);
-    } else {
+    try {
+      // 음성 파일 전송 및 텍스트 변환 호출
+      const messages = [];
+      const setMessages = (newMessages) => { messages.push(...newMessages); };
+
+      await handleSendVoiceFile(setMessages, messages);
+
+      // 변환된 텍스트가 존재할 경우
+      const text = messages[messages.length - 1]?.text || '';
+
+      if (text) {
+        setRecognizedText(text); // 변환된 텍스트 저장
+
+        // Clova 요약 API 호출
+        const result = await getSummary(text);
+        if (result) {
+          setSummary(result); // 요약 결과 저장
+        } else {
+          setSummary('요약 실패');
+        }
+      } else {
+        setRecognizedText('변환된 텍스트가 없습니다.');
+        setSummary('');
+      }
+    } catch (error) {
+      console.error('Error during summarization:', error);
+      setRecognizedText('오류 발생');
       setSummary('요약 실패');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []); // 빈 의존성 배열로 이 함수를 컴포넌트가 마운트될 때만 생성됨
 
   return (
     <View style={styles.container}>
@@ -47,9 +68,18 @@ export default function Screen2({ navigation }) {
           <ActivityIndicator size="large" color="#291695" />
         ) : (
           <>
+            {/* 음성 인식 결과 표시 */}
+            {recognizedText ? (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>음성 인식 결과</Text>
+                <Text style={styles.sectionContent}>{recognizedText}</Text>
+              </View>
+            ) : null}
+
+            {/* 요약 결과 표시 */}
             {summary ? (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>요약 결과</Text>
+                <Text style={styles.sectionTitle}>주요 요약 결과</Text>
                 <Text style={styles.sectionContent}>{summary}</Text>
               </View>
             ) : null}
@@ -59,7 +89,10 @@ export default function Screen2({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleSummarize}>
         <Text style={styles.buttonText}>요약하기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#d9534f', marginTop: 10 }]} onPress={() => navigation.navigate('Screen1')}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: '#d9534f', marginTop: 10 }]}
+        onPress={() => navigation.navigate('HomeScreen')}
+      >
         <Text style={styles.buttonText}>종료하기</Text>
       </TouchableOpacity>
     </View>
@@ -72,6 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     justifyContent: 'space-between',
+    paddingTop: 60
   },
   titleContainer: {
     alignItems: 'center',

@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     marginTop: 70, 
     marginBottom: 20,
     marginRight: 130
-    
   },
   logoutButton: {
     position: 'absolute',
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    height: 200,
+    height: 290,
     marginVertical: 20,
   },
   button: {
@@ -132,18 +131,18 @@ const styles = StyleSheet.create({
     width: '45%',
   },
   buttonIcon: {
-    width: 65,
-    height: 65,
-    marginTop: 22,
-    marginBottom: 13,
+    width: 90,
+    height: 90,
+    marginTop: 50,
+    marginBottom: 23,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 21,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   sectionTitle: {
-    fontSize: 25,
+    fontSize: 27,
     fontWeight: 'bold',
     marginLeft: 25,
     marginVertical: 20,
@@ -153,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     padding: 23,
     borderRadius: 10,
-    marginBottom: 25,
+    marginBottom: 90,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -167,18 +166,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   optionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   optionDescription: {
     marginTop: 15,
-    fontSize: 17,
+    fontSize: 18,
     color: '#666',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 25,
+    paddingVertical: 30,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     width: '100%',

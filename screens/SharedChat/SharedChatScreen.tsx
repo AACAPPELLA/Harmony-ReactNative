@@ -1,28 +1,133 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image} from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import BackButton from "../../components/BackButton";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+// Axios instance
+const api = axios.create({
+  baseURL: 'https://aacappella.shop/',
+});
+
+// Default messages for when no data is available
+const defaultMessages = [
+  { id: 1, text: "이번 회의는 000000건에 대해서 00000 논의를 해야합니다", sender: "bot" },
+  { id: 2, text: "의견 있으신 분 있나요?", sender: "user" },
+  { id: 3, text: "000해서 00000000하시죠.", sender: "bot" },
+  { id: 4, text: "저는 000하고 000하는게 나을 것 같아요.", sender: "user" }
+];
+
+const fetchChatData = async () => {
+  try {
+    const token = await AsyncStorage.getItem('accessToken');
+    const response = await api.get('/chats', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.data.success) {
+      setChatData(response.data.data);
+    } else {
+      console.error('Error', 'Failed to fetch chat data');
+    }
+  } catch (error) {
+    console.error('Error fetching chat data:', error);
+  }
+};
+
+const getCurrentDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const fetchSharedChats = async (setMessages, navigation) => {
+  let token = await AsyncStorage.getItem('accessToken');
+  if (!token) {
+    console.error("No token found, redirecting to login.");
+    navigation.navigate('Login');
+    return;
+  }
+
+  // Print the access token to the console
+  console.log("Stored Access Token:", token);
+
+  // Get the current date
+  const date = getCurrentDate();
+
+  try {
+    const response = await api.get(`/shares/${date}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.data.success) {
+      if (response.data.data.length === 0) {
+        setMessages(defaultMessages);
+      } else {
+        const fetchedMessages = response.data.data.flatMap(item =>
+          item.chat.map(chatMessage => ({
+            id: chatMessage.voiceId,
+            text: chatMessage.content,
+            sender: chatMessage.speaker === 0 ? "bot" : "user",
+          }))
+        );
+        setMessages(fetchedMessages);
+      }
+    } else {
+      console.error("API request failed with error:", response.data.error);
+      setMessages(defaultMessages);
+    }
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      console.error("Unauthorized, attempting to refresh token.");
+      const newToken = await refreshToken();
+      if (newToken) {
+        fetchSharedChats(setMessages, navigation); // 새 토큰으로 재시도
+      } else {
+        navigation.navigate('Login');
+      }
+    } else {
+      console.error("Error fetching shared chats:", error.response ? error.response.data : error.message);
+      setMessages(defaultMessages);
+    }
+  }
+};
 
 function SharedChatScreen() {
-  const [messages, setMessages] = useState([
-    { id: 1, text: "이번 회의는 000000건에 대해서 00000 논의를 해야합니다", sender: "bot" },
-    { id: 2, text: "의견 있으신 분 있나요?", sender: "user" },
-    { id: 3, text: "000해서 00000000하시죠.", sender: "bot" },
-    { id: 4, text: "저는 000하고 000하는게 나을 것 같아요.", sender: "user" }
-  ]);
-
+  const [messages, setMessages] = useState(defaultMessages);
   const navigation = useNavigation();
   const [inputText, setInputText] = useState("");
   const [selectedTab, setSelectedTab] = useState("voiceNotes");
+
+  useEffect(() => {
+    const fetchTokenAndChats = async () => {
+        const token = await AsyncStorage.getItem('accessToken');
+        console.log("Access Token on Mount:", token);
+        if (token) {
+            await fetchSharedChats(setMessages, navigation);
+        } else {
+            console.error("No token found, redirecting to login.");
+            navigation.navigate('Login');
+        }
+    };
+
+    fetchTokenAndChats();
+}, []);
 
   const handleSend = () => {
     if (inputText.trim() !== "") {
       setMessages([...messages, { id: messages.length + 1, text: inputText, sender: "user" }]);
       setInputText("");
+      // handleSendVoiceFile(setMessages, messages); // 음성 파일 보내기 (선택 사항)
     }
   };
 
-  const handleBackPress = () => {
-    navigation.goBack();
+  const handleVoiceInput = () => {
+    // handleSendVoiceFile(setMessages, messages); // 음성 인식 API 트리거 (선택 사항)
   };
 
   const renderMessages = () => {
@@ -59,10 +164,8 @@ function SharedChatScreen() {
 
   return (
     <View style={styles.container}>
+      <BackButton navigation={navigation}></BackButton>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>공유 대화</Text>
       </View>
       <View style={styles.statusBox}>
@@ -97,12 +200,12 @@ function SharedChatScreen() {
         <TextInput
           style={styles.textInput}
           placeholder="텍스트 및 음성으로 내용을 추가할 수 있어요."
-          placeholderTextColor="#ccc" // placeholder 텍스트 색상 설정
-          selectionColor="#291695" // 커서 색상 설정
+          placeholderTextColor="#ccc"
+          selectionColor="#291695"
           value={inputText}
           onChangeText={setInputText}
         />
-        <TouchableOpacity style={styles.microphoneButton}>
+        <TouchableOpacity onPress={handleVoiceInput} style={styles.microphoneButton}>
           <Image source={require('../../assets/shSound.png')} style={styles.buttonIcon} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
@@ -117,6 +220,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    paddingTop: 35
   },
   header: {
     flexDirection: 'row',
@@ -145,9 +249,10 @@ const styles = StyleSheet.create({
     paddingRight: 30,
     backgroundColor: "#f9f9f9",
     borderRadius: 25,
-    margin:10,
+    marginTop: 5,
+    marginBottom: 15,
     width:'90%',
-    paddingVertical:25,
+    paddingVertical: 10,
     alignSelf: 'center',
     borderColor: "#EFEFEF", 
     borderWidth: 1, 

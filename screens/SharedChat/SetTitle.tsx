@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import BackButton from '../../components/BackButton';
 
 const SetTitle = () => {
   const [title, setTitle] = useState("");
@@ -11,10 +12,8 @@ const SetTitle = () => {
 
   return (
     <View style={styles.container}>
+      <BackButton navigation={navigation}></BackButton>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../../assets/mpBack.png')} style={styles.backIcon} resizeMode='contain'/>
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>공유 대화</Text>
       </View>
       <View style={styles.setTitleContainer}>
@@ -65,13 +64,14 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 10,
     flex: 1,
-
   },
   setTitleText: {
-    fontSize: 18,
+    fontSize: 22,
     color: "#000",
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 30,
+    marginTop: 10,
+    marginLeft: 30
   },
   highlight: {
     color: "#291695",
@@ -79,11 +79,13 @@ const styles = StyleSheet.create({
   titleInput: {
     borderWidth: 1,
     borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-    fontSize: 16,
+    padding: 20,
+    borderRadius: 15,
+    fontSize: 17,
     color: "#000",
     marginBottom: 20,
+    width: 320,
+    marginLeft: 20
   },
   saveButton: {
     backgroundColor: "#291695",
@@ -98,8 +100,9 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    paddingVertical: 3
   },
 });
 

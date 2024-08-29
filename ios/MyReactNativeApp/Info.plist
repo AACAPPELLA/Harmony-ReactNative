@@ -26,6 +26,10 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<dict>
 	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
@@ -52,5 +56,31 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	
+	<!-- Push Notification Permissions -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- Add this if you're using Notifications -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
+	<!-- Push Notification Usage Description -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your app needs access to your location when in use for push notifications.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>앱이 음성을 녹음할 수 있도록 허용해주세요.</string>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>앱이 음성을 녹음할 수 있도록 허용해주세요.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Your app needs access to your photo library for push notifications.</string>
 </dict>
 </plist>
