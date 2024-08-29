@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../axios'; 
+import BackButton from '../components/BackButton';
 
 const initialUserData = {
-  name: '김소윤',
-  id: 'soyxni',
-  password: '********',
-  phone: '010-1234-5678',
-  disabilityType: '',
+  name: '',
+  id: '',
+  password: '',
+  confirmPassword: '',
+  phone: '',
+  // disabilityType: '', // 주석 처리
 };
 
 const MyPage = () => {
@@ -15,23 +19,29 @@ const MyPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUserData, setEditedUserData] = useState(initialUserData);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // useEffect로 컴포넌트가 마운트될 때 사용자 정보 가져옴 .. 공부더해
   useEffect(() => {
     fetchUserData();
   }, []);
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/user'); // url 수정
-      const result = await response.json();
-      if (result.success) {
+      const token = await AsyncStorage.getItem('accessToken');
+      const response = await api.get('/users', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.data.success) {
         setEditedUserData({
-          name: result.data.name,
-          id: result.data.serialId,
-          password: '********', // 패스워드는 비공개 -> 수정만 가능?? 회의 때 논의
-          phone: result.data.phoneNumber,
-          disabilityType: result.data.disabled,
+          name: response.data.data.name,
+          id: response.data.data.serialId,
+          password: '', // 패스워드는 비공개 -> 수정만 가능
+          confirmPassword: '',
+          phone: response.data.data.phoneNumber,
+          // disabilityType: response.data.data.disabilityType, // 주석 처리
         });
       } else {
         console.error('Error', 'Failed to fetch user data');
@@ -50,24 +60,27 @@ const MyPage = () => {
   };
 
   const handleSavePress = async () => {
+    if (editedUserData.password !== editedUserData.confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
     try {
-      const response = await fetch('http://your-backend-url/user', {
-        method: 'PUT',
+      const token = await AsyncStorage.getItem('accessToken');
+      const response = await api.put('/users', {
+        password: editedUserData.password,
+        name: editedUserData.name,
+        phoneNumber: editedUserData.phone,
+        // email: 'your-email@example.com', // 가입 시에는 입력X
+        // disabilityType: editedUserData.disabilityType, // 주석 처리
+      }, {
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          password: editedUserData.password,
-          name: editedUserData.name,
-          phoneNumber: editedUserData.phone,
-          email: 'your-email@example.com', //가입 시에는 입력X
-          eDisabled: editedUserData.disabilityType,
-        }),
       });
-      const result = await response.json();
-      if (result.success) {
+      if (response.data.success) {
         setIsEditing(false);
-        Alert.alert('Success', 'User data updated successfully');
+        Alert.alert('수정 성공!', '회원님의 정보를 성공적으로 수정하였습니다.');
       } else {
         console.error('Error', 'Failed to update user data');
       }
@@ -85,13 +98,18 @@ const MyPage = () => {
     setEditedUserData({ ...editedUserData, [key]: value });
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Image source={require('../assets/mpBack.png')} style={styles.icon} resizeMode='contain'/>
-        </TouchableOpacity>
+      <BackButton navigation={navigation} />
         <Text style={styles.headerTitle}>MyPage</Text>
       </View>
       <ScrollView>
@@ -124,28 +142,52 @@ const MyPage = () => {
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpId.png')} style={styles.icon} resizeMode='contain' />
-            {isEditing ? (
-              <TextInput
-                style={styles.inputText}
-                value={editedUserData.id}
-                onChangeText={(text) => handleChange('id', text)}
-              />
-            ) : (
-              <Text style={styles.infoText}>{editedUserData.id}</Text>
-            )}
+            <Text style={styles.infoText}>{editedUserData.id}</Text>
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpPW.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
-              <TextInput
-                style={styles.inputText}
-                value={editedUserData.password}
-                onChangeText={(text) => handleChange('password', text)}
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.inputText}
+                  value={editedUserData.password}
+                  secureTextEntry={!showPassword}
+                  placeholder="새 비밀번호"
+                  onChangeText={(text) => handleChange('password', text)}
+                />
+                <TouchableOpacity onPress={toggleShowPassword}>
+                  <Image
+                    source={showPassword ? require('../assets/eye_open.png') : require('../assets/eye_close.png')}
+                    style={styles.eyeIcon}
+                    resizeMode='contain'
+                  />
+                </TouchableOpacity>
+              </View>
             ) : (
-              <Text style={styles.infoText}>{editedUserData.password}</Text>
+              <Text style={styles.infoText}>********</Text>
             )}
           </View>
+          {isEditing && (
+            <View style={styles.infoRow}>
+              <Image source={require('../assets/mpPW.png')} style={styles.icon} resizeMode='contain' />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.inputText}
+                  value={editedUserData.confirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                  placeholder="비밀번호 재확인"
+                  onChangeText={(text) => handleChange('confirmPassword', text)}
+                />
+                <TouchableOpacity onPress={toggleShowConfirmPassword}>
+                  <Image
+                    source={showConfirmPassword ? require('../assets/eye_open.png') : require('../assets/eye_close.png')}
+                    style={styles.eyeIcon}
+                    resizeMode='contain'
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpTele.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
@@ -158,6 +200,7 @@ const MyPage = () => {
               <Text style={styles.infoText}>{editedUserData.phone}</Text>
             )}
           </View>
+          {/*
           <View style={styles.infoRow}>
             <Image source={require('../assets/mpCate.png')} style={styles.icon} resizeMode='contain' />
             {isEditing ? (
@@ -170,6 +213,7 @@ const MyPage = () => {
               <Text style={styles.infoText}>{editedUserData.disabilityType}</Text>
             )}
           </View>
+          */}
           {!isEditing && (
             <TouchableOpacity onPress={handleEditPress}>
               <Text style={styles.editButton}>수정하기</Text>
@@ -187,6 +231,21 @@ const MyPage = () => {
           )}
         </View>
       </ScrollView>
+
+      {/* Conditionally render the footer navigation bar */}
+      {!isEditing && (
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Home')}>
+            <Image source={require('../assets/home-icon-gray.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Calendar')}>
+            <Image source={require('../assets/calendar-icon-gray.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('MyPage')}>
+            <Image source={require('../assets/settings-icon-navy.png')} style={styles.footerIcon} />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
@@ -237,6 +296,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     flex: 1,
     marginLeft: 10,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  eyeIcon: {
+    width: 20,
+    height: 20,
   },
   welcomeContainer: {
     flexDirection: 'row',
@@ -304,6 +372,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    width: '100%',
+  },
+  footerButton: {
+    alignItems: 'center',
+  },
+  footerIcon: {
+    width: 35,
+    height: 35,
   },
 });
 

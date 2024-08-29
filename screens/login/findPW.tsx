@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import api from '../../axios'; // API 호출을 위해 axios 인스턴스를 import
 
 const FindPW = () => {
   const navigation = useNavigation();
@@ -9,14 +10,6 @@ const FindPW = () => {
     id: '',
     phone: '',
   });
-
-  // 임시 데이터 설정
-  const mockData = {
-    name: 'kimsoyoon',
-    id: 'soyxni',
-    phone: '01012345678',
-    token: 'mock-token-1234567890abcdef',
-  };
 
   // 뒤로가기 버튼 클릭 시 호출되는 함수
   const handleBackPress = () => {
@@ -27,9 +20,28 @@ const FindPW = () => {
   const handleNextPress = async () => {
     const { name, id, phone } = userData;
 
-    // 모든 정보가 없어도 비밀번호 재설정 페이지로 이동
-    const token = mockData.token;
-    navigation.navigate('resetPW', { token });
+    try {
+      const response = await api.get('/auth/check/password', {
+        params: {
+          serialId: id,
+          userName: name,
+          phoneNumber: phone,
+        },
+      });
+
+      if (response.data.success) {
+        // 인증이 성공하면 토큰을 받아 비밀번호 재설정 페이지로 이동
+        const token = response.data.data;
+        navigation.navigate('resetPW', { token });
+      } else {
+        // 인증 실패 시 경고 메시지 출력
+        Alert.alert('오류', '입력한 정보가 일치하지 않습니다. 다시 확인해 주세요.');
+      }
+    } catch (error) {
+      // 네트워크 오류 등 예외 처리
+      Alert.alert('오류', '서버와의 통신에 문제가 발생했습니다.');
+      console.error('Error checking user info:', error);
+    }
   };
 
   // 입력값 변경 시 호출되는 함수

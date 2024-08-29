@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from '../axios';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -8,10 +10,26 @@ const HomeScreen = () => {
 
   const toggleRiskMode = () => setIsRiskModeEnabled(previousState => !previousState);
 
-  const handleLogout = () => {
-    // Handle logout logic here
-    console.log('Logging out...');
-    navigation.navigate('Login');
+  const handleLogout = async () => {
+    try{
+      const token = await AsyncStorage.getItem('userToken'); //토큰 가져옴
+
+      const response = await api.post('/auth/logout', {}, {
+        headers: {
+          Authorization: 'Bearer ${token}'
+        }
+      });
+
+      if(response.data.success){
+        await AsyncStorage.removeItem('userToken'); //토큰 삭제
+        console.log('토큰 삭제 성공');
+        navigation.navigate('Login');
+      }else{
+        console.error('Logout failed: ', response.data.error);
+      }
+    }catch(error){
+      console.error('Error during logout: ', error);
+    }
   };
 
   return (
@@ -43,11 +61,13 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
       
+      {/* 
       <View style={styles.optionContainer}>
         <Text style={styles.optionTitle}>나의 소리</Text>
         <Text style={styles.optionDescription}>다시 설명할 필요 없이 필요할 때 언제 어디서나 나의 필담을 공유할 수 있어요!</Text>
       </View>
-
+      */}
+      
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton} onPress={() => navigation.navigate('Home')}>
           <Image source={require('../assets/home-icon-navy.png')} style={styles.footerIcon} />
